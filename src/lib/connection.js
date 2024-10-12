@@ -20,7 +20,8 @@ const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME } = process.env;
  * --------------------------------------
  */
 
-const url = `mongodb+srv://AccesGo:Accesibilidad.1@accessgo.gxajq.mongodb.net/`;
+const URI = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`
+;
 // const url = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`;
 
 /**
@@ -29,7 +30,9 @@ const url = `mongodb+srv://AccesGo:Accesibilidad.1@accessgo.gxajq.mongodb.net/`;
  * --------------------------------------
  */
 
-const connect = () => mongoose.connect(url);
+function connect () {
+    return mongoose.connect(URI)
+}
 
 /**
  * --------------------------------------
