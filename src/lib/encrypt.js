@@ -17,4 +17,6 @@ module.exports  = {
     compare,
 }
 
-//encriptacion con bycrypt 
+// bycrypt
+//usar jwt  
+
