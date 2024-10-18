@@ -23,15 +23,16 @@ const modelName = 'Register';
 const userSchema = new mongoose.Schema({
     email:{
         type: String,
-        require: true,
+        required: true,
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
         minLength: 4,
         maxLength: 30
     },
     password:{
         type: String,
-        require: true,
-        minLength: 4,
-        maxLength: 15
+        required: true,
+        minLength: 6,
+        maxLength: 30
     },
     created_at: {
         type: Date,
