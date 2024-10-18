@@ -32,7 +32,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 6,
-        maxLength: 30
+        maxLength: 60  // Aumentamos el tamaño máximo para acomodar el hash
     },
     created_at: {
         type: Date,
