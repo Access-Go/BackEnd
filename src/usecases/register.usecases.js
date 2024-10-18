@@ -14,6 +14,7 @@ const register = require('../models/register.model')
  * @returns - Nuevo usuario creado
  */
 
+
 const create = async (registerData) => {
     // Busca si ya existe un usuario con el mismo email
     const registerFound = await register.find({ email: registerData.email });
@@ -34,4 +35,4 @@ const create = async (registerData) => {
  * -----------------------------------------
  */
 
-module.exports = { create, getById };
+module.exports = { create };

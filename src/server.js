@@ -1,12 +1,13 @@
+const express = require('express');
+const registerRoutes = require('./routes/register.routes');
+const phoneRoutes = require('./routes/phone.routes');
 
-const express = require('express')
+const app = express();
 
+app.use(express.json());
 
-const app = express()
-
-app.use(express.json())
-
-
+app.use('/api', registerRoutes);
+app.use('/api', phoneRoutes);
 
 app.get("/", (request, response) => {
     response.json({
@@ -14,5 +15,4 @@ app.get("/", (request, response) => {
     })
 })
 
-
-module.exports = app
+module.exports = app;

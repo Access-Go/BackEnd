@@ -19,8 +19,9 @@ const router = express.Router();
  * --------------------------------------
  */
 
-router.post('/', registerController.createRegister);
+router.post('/register', registerController.createRegister);
 
+console.log('Rutas de registro cargadas');
 /**
  * --------------------------------------
  * Exportamos el router
