@@ -5,6 +5,9 @@
  */
 
 const register = require('../models/register.model')
+const bcrypt = require('bcrypt');
+
+const saltRounds = 10; // Número de rondas de salt para bcrypt
 
 /**
  * --------------------------------------
@@ -22,11 +25,21 @@ const create = async (registerData) => {
     // Si encuentra un usuario, lanza un error
     if (registerFound.length > 0) throw new Error('Register with this email already exists');
 
-    // Corregimos userData por registerData
-    const newUser = await register.create(registerData);
+    // Encripta la contraseña
+    const hashedPassword = await bcrypt.hash(registerData.password, saltRounds);
 
-    // Devuelve el nuevo usuario creado
-    return newUser;
+    // Crea un nuevo objeto con la contraseña encriptada
+    const secureRegisterData = {
+        ...registerData,
+        password: hashedPassword
+    };
+
+    // Crea el nuevo usuario con la contraseña encriptada
+    const newUser = await register.create(secureRegisterData);
+
+    // Devuelve el nuevo usuario creado (sin la contraseña)
+    const { password, ...userWithoutPassword } = newUser.toObject();
+    return userWithoutPassword;
 }
 
 /**
