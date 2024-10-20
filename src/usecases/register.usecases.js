@@ -3,8 +3,7 @@
  * Importamos el modelo de usuarios y la función de encriptación
  * -------------------------------------------------------------
  */
-
-const register = require('../models/register.model')
+const register = require('../models/register.model');
 const bcrypt = require('bcrypt');
 
 const saltRounds = 10; // Número de rondas de salt para bcrypt
@@ -16,22 +15,21 @@ const saltRounds = 10; // Número de rondas de salt para bcrypt
  * @param {Object} registerData - Datos del registro a crear
  * @returns - Nuevo usuario creado
  */
-
-
 const create = async (registerData) => {
     // Busca si ya existe un usuario con el mismo email
     const registerFound = await register.find({ email: registerData.email });
 
     // Si encuentra un usuario, lanza un error
-    if (registerFound.length > 0) throw new Error('Register with this email already exists');
+    if (registerFound.length > 0) throw new Error('El registro con este correo electrónico ya existe');
 
     // Encripta la contraseña
     const hashedPassword = await bcrypt.hash(registerData.password, saltRounds);
 
-    // Crea un nuevo objeto con la contraseña encriptada
+    // Crea un nuevo objeto con la contraseña encriptada y el tipo de usuario
     const secureRegisterData = {
         ...registerData,
-        password: hashedPassword
+        password: hashedPassword,
+        tipoUsuario: registerData.type.tipoUsuario // Accedemos a tipoUsuario dentro de type
     };
 
     // Crea el nuevo usuario con la contraseña encriptada
@@ -40,12 +38,11 @@ const create = async (registerData) => {
     // Devuelve el nuevo usuario creado (sin la contraseña)
     const { password, ...userWithoutPassword } = newUser.toObject();
     return userWithoutPassword;
-}
+};
 
 /**
  * -----------------------------------------
  * Exportamos las funciones
  * -----------------------------------------
  */
-
 module.exports = { create };

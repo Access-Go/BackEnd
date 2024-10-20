@@ -1,6 +1,7 @@
 const express = require('express');
 const registerRoutes = require('./routes/register.routes');
 const phoneRoutes = require('./routes/phone.routes');
+const verificationRouter = require('./routes/verification.routes');
 
 const cors = require('cors');
 
@@ -17,6 +18,7 @@ app.use(express.json());
 
 app.use('/api', registerRoutes);
 app.use('/api', phoneRoutes);
+app.use('/api/verification', verificationRouter);
 
 app.get("/", (request, response) => {
     response.json({
