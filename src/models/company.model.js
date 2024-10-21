@@ -7,33 +7,17 @@ const mongoose = require('mongoose');
 
 /**
  * -----------------------------------------------------------------
- * Creamos el nombre del modelo para usuarios regulares
+ * Creamos el nombre del modelo para compañías
  * -----------------------------------------------------------------
  */
-const modelName = 'Register';
+const modelName = 'Company';
 
 /**
  * -----------------------------------------------------------------
- * Creamos nuestro esquema para usuarios regulares
+ * Creamos nuestro esquema para compañías
  * -----------------------------------------------------------------
  */
-const userSchema = new mongoose.Schema({
-    profilePicture: {
-        type: String,
-        required: false,
-        maxLength: 100,
-    },
-    firstName: {
-        type: String,
-        required: false,
-        minLength: 2,
-        maxLength: 100,
-    },
-    lastName: {
-        type: String,
-        required: false,
-        maxLength: 100,
-    },
+const companySchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -49,13 +33,40 @@ const userSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['user'], // Definimos el tipo como 'user'
-        default: 'user', // Por defecto es un usuario regular
+        enum: ['company'],
+        default: 'company',
         required: true
     },
-    birthDate: {
-        type: Date,
-        required: false,
+    companyName: {
+        type: String,
+        required: true, // Las compañías deben tener un nombre
+        maxLength: 100
+    },
+    address: {
+        type: String,
+        required: true // Dirección de la compañía
+    },
+    phone: {
+        type: String,
+        required: true, // Teléfono de contacto de la compañía
+        match: /^\+?[1-9]\d{1,14}$/ // Validación para número de teléfono
+    },
+    subscription: {
+        type: String,
+        enum: ['free', 'premium'], // Planes de suscripción
+        default: 'free', // Por defecto es gratuita
+        required: true
+    },
+    premiumFeatures: {
+        maxLocations: {
+            type: Number,
+            default: 1 // Solo 1 ubicación para cuentas gratuitas
+        },
+        hasStatistics: {
+            type: Boolean,
+            default: false // Solo cuentas premium pueden tener acceso a estadísticas
+        },
+        // Puedes agregar más características premium aquí
     },
     verified: {
         type: Boolean,
@@ -79,14 +90,14 @@ const userSchema = new mongoose.Schema({
  * Middleware para actualizar `updated_at` cuando se modifica el documento
  * -----------------------------------------------------------------
  */
-userSchema.pre('save', function (next) {
+companySchema.pre('save', function (next) {
     this.updated_at = Date.now();
     next();
 });
 
 /**
  * -----------------------------------------------------------------
- * Exportamos el modelo de usuario regular
+ * Exportamos el modelo de compañía
  * -----------------------------------------------------------------
  */
-module.exports = mongoose.model(modelName, userSchema);
+module.exports = mongoose.model(modelName, companySchema);
