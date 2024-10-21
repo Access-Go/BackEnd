@@ -62,6 +62,9 @@ async function verifyUserCode(userId, code) {
     // Elimina el código verificado
     await Verification.deleteOne({ _id: verification._id });
 
+    user.verified = true;
+    await user.save();
+
     return true;
 }
 
