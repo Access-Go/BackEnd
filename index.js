@@ -38,14 +38,11 @@ const PORT = process.env.PORT || 8080;
 
 db.connect()
     .then(() => {
-        // Mensaje de éxito de conexión a la base de datos
         console.log('DB Connected');
         server.listen(PORT, () => {
-            // Mensaje de éxito de inicio del servidor
             console.log(`Server running on port: ${PORT}`);
         });
     })
     .catch((error) => {
-        // Mensaje de error en la conexión a la base de datos
         console.error('DB Connection Failed: ', error);
     });

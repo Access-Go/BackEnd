@@ -18,6 +18,7 @@ const saltRounds = 10; // Número de rondas de salt para bcrypt
 const create = async (registerData) => {
     // Busca si ya existe un usuario con el mismo email
     const registerFound = await register.find({ email: registerData.email });
+    
 
     // Si encuentra un usuario, lanza un error
     if (registerFound.length > 0) throw new Error('El registro con este correo electrónico ya existe');
