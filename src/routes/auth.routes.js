@@ -7,6 +7,7 @@ const router = express.Router()
 router.post("/", async (request, response) => {
     try {
         const { email, password } = request.body
+
         const token = await authUseCase.login(email, password)
 
         console.log(token)
