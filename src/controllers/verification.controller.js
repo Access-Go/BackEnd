@@ -1,4 +1,4 @@
-const { sendVerificationCode, verifyUserCode } = require('../usecases/verification.usecases');
+const { sendVerificationCode, verifyUserCode, updateVerifiedTrue } = require('../usecases/verification.usecases');
 const User = require('../models/register.model');
 
 /**
@@ -55,9 +55,34 @@ const verifyCodeController = async (req, res) => {
     }
 };
 
+/**
+ * Controlador para actualizar el estado de verificación a "true" para un usuario específico
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ */
+const updateVerifiedTrueController = async (req, res) => {
+    const { userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ message: 'El ID de usuario es requerido.' });
+    }
+
+    try {
+        const updatedUser = await updateVerifiedTrue(userId);
+
+        if (updatedUser) {
+            return res.status(200).json({ message: 'El estado de verificación ha sido actualizado exitosamente.', user: updatedUser });
+        }
+
+        res.status(404).json({ message: 'Usuario no encontrado.' });
+    } catch (error) {
+        handleError(res, error, 'Hubo un error al actualizar el estado de verificación.');
+    }
+};
 
 
 module.exports = {
     sendCodeController,
-    verifyCodeController
+    verifyCodeController,
+    updateVerifiedTrueController
 };

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { sendVerificationCode, verifyUserCode } = require('../usecases/verification.usecases');
+const { sendVerificationCode, verifyUserCode, updateVerifiedTrue } = require('../usecases/verification.usecases');
 const User = require('../models/register.model');
 
 // Ruta para enviar el código de verificación
@@ -50,5 +50,31 @@ router.post('/verify-code', async (req, res) => {
         return res.status(500).json({ message: 'Error al verificar el código.' });
     }
 });
+
+// Ruta para actualizar el estado de verificación a "true"
+router.patch('/verified-true', async (req, res) => {
+    const { userId } = req.body;
+
+    // Validación de entrada
+    if (!userId) {
+        return res.status(400).json({ message: 'El ID de usuario es requerido.' });
+    }
+
+    try {
+        // Llama a la función para actualizar el estado de verificación a true
+        const updatedUser = await updateVerifiedTrue(userId);
+
+        if (updatedUser) {
+            return res.status(200).json({ message: 'El estado de verificación ha sido actualizado exitosamente.', user: updatedUser });
+        }
+
+        return res.status(404).json({ message: 'Usuario no encontrado.' });
+    } catch (error) {
+        console.error('Error al actualizar el estado de verificación:', error);
+        return res.status(500).json({ message: 'Error al actualizar el estado de verificación.' });
+    }
+});
+
+
 
 module.exports = router;
