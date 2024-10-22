@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const Verification = require('../models/verification');
 const sendEmail = require('../utils/sendEmail.js'); // Función para enviar correos
+const Register = require('../models/register.model')
+
 
 /**
  * Genera un código de verificación de 6 dígitos
@@ -46,6 +48,7 @@ async function sendVerificationCode(userId, email) {
  * @param {String} code El código de verificación proporcionado por el usuario
  * @returns {Promise<boolean>} Verdadero si el código es válido, falso si no
  */
+
 async function verifyUserCode(userId, code) {
     const verification = await Verification.findOne({ userId, code });
     
@@ -62,12 +65,20 @@ async function verifyUserCode(userId, code) {
     // Elimina el código verificado
     await Verification.deleteOne({ _id: verification._id });
 
-    user.verified = true;
-    await user.save();
+   
 
     return true;
 }
 
+async function updateVerifiedTrue(userId) {
+    // Busca al usuario por ID y actualiza su estado de verificación
+    const updatedUser = await Register.findByIdAndUpdate(
+        userId, 
+        { verified: true }, 
+        { new: true } // Devuelve el documento actualizado
+    );
+    return updatedUser;
+}
 
 /**
  * Revoca cualquier código de verificación pendiente si es necesario
@@ -78,8 +89,10 @@ async function revokePendingCodes(userId) {
     await Verification.deleteMany({ userId });
 }
 
+
 module.exports = {
     sendVerificationCode,
     verifyUserCode,
+    updateVerifiedTrue,
     revokePendingCodes
 };
