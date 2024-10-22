@@ -16,8 +16,9 @@ async function login (email, password) {
         throw createError(401, "Invalid data")
     }
 
-    const token = jwt.sign({ id: user._id })
-    return token
+    // const token = jwt.sign({ id: user._id })
+    return isPasswordValid
+    //return token
 }
 
 module.exports = {

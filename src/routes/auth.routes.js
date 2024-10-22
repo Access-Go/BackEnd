@@ -4,10 +4,12 @@ const authUseCase = require("../usecases/auth.usecase")
 
 const router = express.Router()
 
-router.post("/login", async (request, response) => {
+router.post("/", async (request, response) => {
     try {
         const { email, password } = request.body
         const token = await authUseCase.login(email, password)
+
+        console.log(token)
 
         response.json({
             success: true,
