@@ -34,6 +34,4 @@ async function login (email, password) {
     return token
 }
 
-module.exports = {
-    login,
-}
+module.exports = { login }
