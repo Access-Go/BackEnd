@@ -18,7 +18,7 @@ const saltRounds = 10; // Número de rondas de salt para bcrypt
 const create = async (registerData) => {
     // Busca si ya existe un usuario con el mismo email
     const registerFound = await register.find({ email: registerData.email });
-    
+
 
     // Si encuentra un usuario, lanza un error
     if (registerFound.length > 0) throw new Error('El registro con este correo electrónico ya existe');
@@ -43,7 +43,33 @@ const create = async (registerData) => {
 
 /**
  * -----------------------------------------
+ * Función para obtener un usuario por su ID
+ * -----------------------------------------
+ * @param {string} id - ID del usuario a obtener
+ * @returns - Usuario encontrado por su ID
+ */
+
+const getById = async (id) => {
+    const user = await register.findById(id);
+    return user;
+}
+
+/**
+ * -----------------------------------------
+ * Función para obtener un usuario por su ID
+ * -----------------------------------------
+ * @param {string} id - ID del usuario a obtener
+ * @returns - Usuario encontrado por su ID
+ */
+
+const getAll = async () => {
+    const user = await register.find();
+    return user;
+}
+
+/**
+ * -----------------------------------------
  * Exportamos las funciones
  * -----------------------------------------
  */
-module.exports = { create };
+module.exports = { create, getById, getAll };
