@@ -1,5 +1,6 @@
 const express = require('express');
 const registerRoutes = require('./routes/register.routes');
+const companyRoutes = require('./routes/company.routes');
 const phoneRoutes = require('./routes/phone.routes');
 const verificationRouter = require('./routes/verification.routes');
 const authRoutes = require('./routes/auth.routes');
@@ -21,6 +22,7 @@ app.use('/api', registerRoutes);
 app.use('/api', phoneRoutes);
 app.use('/api/verification', verificationRouter);
 app.use('/api/auth', authRoutes)
+app.use('/api/company', companyRoutes);
 
 app.get("/", (request, response) => {
     response.json({
