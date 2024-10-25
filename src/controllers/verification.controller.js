@@ -1,4 +1,4 @@
-const { sendVerificationCode, verifyUserCode, updateVerifiedTrue } = require('../usecases/verification.usecases');
+const { sendVerificationCode, verifyUserCode, updateVerifiedTrue,  fyndByEmail } = require('../usecases/verification.usecases');
 const User = require('../models/register.model');
 
 /**
@@ -81,8 +81,45 @@ const updateVerifiedTrueController = async (req, res) => {
 };
 
 
+// Controlador que maneja la verificación del email en el contexto de login o creación de cuenta
+async function checkEmailController(req, res) {
+    const { email, context } = req.body; // Obtenemos el email y el contexto (login o createAccount) del request
+    
+    try {
+        const result = await fyndByEmail(email); // Llamamos a la función fyndByEmail para verificar el correo
+
+        // Dependiendo del contexto (login o createAccount), mostramos el mensaje apropiado
+        if (context === 'crearAccount') {
+            if (result.exists && result.verified) {
+                return res.status(400).json({ message: 'Ya existe una cuenta con este correo registrado.' });
+            } else if (result.exists && !result.verified) {
+                return res.status(200).json({ message: 'Tu correo ya está registrado pero no has verificado, pulsa el botón para enviarte el código de verificación.' });
+            } else {
+                return res.status(200).json({ message: 'No se encontró ninguna cuenta con este correo, procede a crear una cuenta.' });
+            }
+        } else if (context === 'LogIn') {
+            if (result.exists && result.verified) {
+                return res.status(200).json({ message: 'Correo encontrado, procede con el inicio de sesión.' });
+            } else if (result.exists && !result.verified) {
+                return res.status(400).json({ message: 'Tu correo ya está registrado pero no has verificado. Por favor, verifica tu cuenta.' });
+            } else {
+                return res.status(400).json({ message: 'No se encontró ninguna cuenta con este correo.' });
+            }
+        }
+
+        return res.status(400).json({ message: 'Contexto inválido.' });
+    } catch (error) {
+        console.error('Error al verificar el correo:', error);
+        return res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+}
+
+
+
+
 module.exports = {
     sendCodeController,
     verifyCodeController,
-    updateVerifiedTrueController
+    updateVerifiedTrueController,
+     checkEmailController
 };
