@@ -4,7 +4,7 @@
  * --------------------------------------
  */
 const express = require('express');
-const registerController = require('../controllers/register.controller');
+const companyController = require('../controllers/company.controller');
 
 /**
  * --------------------------------------
@@ -19,15 +19,14 @@ const router = express.Router();
  * --------------------------------------
  */
 
-router.post('/register', registerController.createRegister);
+router.post('/register', companyController.createCompany);
 
 /**
  * --------------------------------------
  * Rutas buscar usuario por id
  * --------------------------------------
  */
-router.get('/:id', registerController.registerById);
-
+router.get('/:id', companyController.companyById);
 
 /**
  * --------------------------------------
@@ -35,9 +34,9 @@ router.get('/:id', registerController.registerById);
  * --------------------------------------
  */
 
-router.get('/', registerController.registerAll);
+router.get('/', companyController.companyAll);
 
-console.log('Rutas de registro cargadas');
+console.log('Company de registro cargadas');
 /**
  * --------------------------------------
  * Exportamos el router
