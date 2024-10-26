@@ -39,23 +39,23 @@ const companySchema = new mongoose.Schema({
     },
     companyName: {
         type: String,
-        required: true, // Las compañías deben tener un nombre
+        required: false, // Las compañías deben tener un nombre
         maxLength: 100
     },
     address: {
         type: String,
-        required: true // Dirección de la compañía
+        required: false // Dirección de la compañía
     },
     phone: {
         type: String,
-        required: true, // Teléfono de contacto de la compañía
+        required: false, // Teléfono de contacto de la compañía
         match: /^\+?[1-9]\d{1,14}$/ // Validación para número de teléfono
     },
     subscription: {
         type: String,
         enum: ['free', 'premium'], // Planes de suscripción
         default: 'free', // Por defecto es gratuita
-        required: true
+        required: false
     },
     premiumFeatures: {
         maxLocations: {
