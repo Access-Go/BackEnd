@@ -1,70 +1,75 @@
 /*
  * -------------------------------------------------------------
- * Importamos el modelo de usuarios y la función de encriptación
+ * Importamos el modelo de compañías
  * -------------------------------------------------------------
  */
-const company = require('../models/company.model');
+const Company = require('../models/company.model');
 const bcrypt = require('bcrypt');
-
-const saltRounds = 10; // Número de rondas de salt para bcrypt
+const saltRounds = 10;
 
 /**
  * --------------------------------------
- * Función para crear un nuevo usuario
+ * Función para crear una nueva compañía
  * --------------------------------------
- * @param {Object} registerData - Datos del registro a crear
- * @returns - Nuevo usuario creado
+ * @param {Object} companyData - Datos de la compañía a crear
+ * @returns - Nueva compañía creada
  */
-const create = async (registerData) => {
-    // Busca si ya existe un usuario con el mismo email
-    const registerFound = await company.find({ email: registerData.email });
-
-
-    // Si encuentra un usuario, lanza un error
-    if (registerFound.length > 0) throw new Error('El registro con este correo electrónico ya existe');
+const create = async (companyData) => {
+    // Verifica si existe una compañía con el mismo email
+    const companyFound = await Company.findOne({ email: companyData.email });
+    if (companyFound) throw new Error('La compañía con este correo electrónico ya existe');
 
     // Encripta la contraseña
-    const hashedPassword = await bcrypt.hash(registerData.password, saltRounds);
+    if (companyData.password) {
+        companyData.password = await bcrypt.hash(companyData.password, saltRounds);
+    }
 
-    // Crea un nuevo objeto con la contraseña encriptada y el tipo de usuario
-    const secureRegisterData = {
-        ...registerData,
-        password: hashedPassword,
-        tipoUsuario: registerData.type.tipoUsuario // Accedemos a tipoUsuario dentro de type
-    };
+    const newCompany = new Company(companyData);
+    await newCompany.save();
 
-    // Crea el nuevo usuario con la contraseña encriptada
-    const newCompany = await company.create(secureRegisterData);
-
-    // Devuelve el nuevo usuario creado (sin la contraseña)
-    const { password, ...userWithoutPassword } = newCompany.toObject();
-    return userWithoutPassword;
+    // Excluir el campo `password` en la respuesta
+    const { password, ...companyWithoutPassword } = newCompany.toObject();
+    return companyWithoutPassword;
 };
 
 /**
  * -----------------------------------------
- * Función para obtener un usuario por su ID
+ * Función para obtener una compañía por su ID
  * -----------------------------------------
- * @param {string} id - ID del usuario a obtener
- * @returns - Usuario encontrado por su ID
+ * @param {string} id - ID de la compañía a obtener
+ * @returns - Compañía encontrada por su ID
  */
-
 const getById = async (id) => {
-    const user = await company.findById(id);
-    return user;
+    const company = await Company.findById(id).select('-password');
+    return company;
 }
 
 /**
- * -----------------------------------------
- * Función para obtener un usuario por su ID
- * -----------------------------------------
- * @param {string} id - ID del usuario a obtener
- * @returns - Usuario encontrado por su ID
+ * --------------------------------------
+ * Función para actualizar una compañía
+ * --------------------------------------
+ * @param {string} id - ID de la compañía a actualizar
+ * @param {Object} updateData - Datos de la compañía a actualizar
+ * @returns - Compañía actualizada sin campo `password`
  */
+const update = async (id, updateData) => {
+    if (updateData.password) {
+        updateData.password = await bcrypt.hash(updateData.password, saltRounds);
+    }
+    const updatedCompany = await Company.findByIdAndUpdate(id, updateData, { new: true }).select('-password');
+    if (!updatedCompany) throw new Error('Company not found');
+    return updatedCompany;
+};
 
+/**
+ * -----------------------------------------
+ * Función para obtener todas las compañías
+ * -----------------------------------------
+ * @returns - Lista de todas las compañías
+ */
 const getAll = async () => {
-    const company = await company.find();
-    return company;
+    const companies = await Company.find().select('-password');
+    return companies;
 }
 
 /**
@@ -72,4 +77,4 @@ const getAll = async () => {
  * Exportamos las funciones
  * -----------------------------------------
  */
-module.exports = { create, getById, getAll };
+module.exports = { create, getById, getAll, update };

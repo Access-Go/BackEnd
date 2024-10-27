@@ -42,6 +42,39 @@ const create = async (registerData) => {
 };
 
 /**
+ * Función para actualizar un usuario existente
+ * --------------------------------------
+ * @param {Object} registerData - Datos del registro a actualizar
+ * @returns - Usuario actualizado
+ */
+const update = async (registerData) => {
+    // Busca el usuario existente por su email
+    const registerFound = await register.findOne({ email: registerData.email });
+
+    // Si no encuentra el usuario, lanza un error
+    if (!registerFound) throw new Error('El registro con este correo electrónico no existe');
+
+    // Si se proporciona una nueva contraseña, encripta la nueva contraseña
+    if (registerData.password) {
+        registerData.password = await bcrypt.hash(registerData.password, saltRounds);
+    }
+
+    // Actualiza los campos del usuario con los datos proporcionados
+    const updatedRegisterData = {
+        ...registerFound.toObject(),
+        ...registerData,
+        tipoUsuario: registerData.type?.tipoUsuario || registerFound.tipoUsuario // Accedemos a tipoUsuario dentro de type si existe
+    };
+
+    // Actualiza el usuario en la base de datos
+    await register.updateOne({ email: registerData.email }, updatedRegisterData);
+
+    // Devuelve el usuario actualizado (sin la contraseña)
+    const { password, ...userWithoutPassword } = updatedRegisterData;
+    return userWithoutPassword;
+};
+
+/**
  * -----------------------------------------
  * Función para obtener un usuario por su ID
  * -----------------------------------------

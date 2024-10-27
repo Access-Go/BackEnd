@@ -5,12 +5,12 @@ const modelName = "users"
 const schema = new mongoose.Schema({
     profilePicture: {
         type: String,
-        required: true,
+        required: false,
         maxLength: 100,
     },
     firstName: {
         type: String,
-        required: true,
+        required: false,
         minLength: 2,
         maxLength: 100,
     },

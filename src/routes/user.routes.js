@@ -4,7 +4,7 @@
  * --------------------------------------
  */
 const express = require('express');
-const registerController = require('../controllers/register.controller');
+const userController = require('../controllers/user.controller');
 
 /**
  * --------------------------------------
@@ -15,29 +15,39 @@ const router = express.Router();
 
 /**
  * --------------------------------------
- * Rutas crear usuario
+ * Rutas para crear un usuario
  * --------------------------------------
  */
-
-router.post('/register', registerController.createRegister);
+router.post('/', userController.createUser);
 
 /**
  * --------------------------------------
- * Rutas buscar usuario por id
+ * Ruta para obtener un usuario por ID
  * --------------------------------------
  */
-router.get('/:id', registerController.registerById);
-
+router.get('/:id', userController.userById);
 
 /**
  * --------------------------------------
- * Rutas buscar todos los registros
+ * Ruta para obtener todos los usuarios
  * --------------------------------------
  */
+router.get('/', userController.getAllUsers);
 
-router.get('/registers', registerController.registerAll);
+/**
+ * --------------------------------------
+ * Ruta para actualizar un usuario por ID
+ * --------------------------------------
+ */
+router.put('/:id', userController.updateUser);
 
-console.log('Rutas de registro cargadas');
+/**
+ * --------------------------------------
+ * Ruta para eliminar un usuario por ID
+ * --------------------------------------
+ */
+router.delete('/:id', userController.deleteUser);
+
 /**
  * --------------------------------------
  * Exportamos el router
