@@ -80,6 +80,43 @@ async function updateVerifiedTrue(userId) {
     return updatedUser;
 }
 
+async function fyndByEmail(email, context) {
+    try {
+        // Busca al usuario por email
+        const user = await Register.findOne({ email: email });
+
+        // Si no se encuentra un usuario con ese correo
+        if (!user) {
+            // Si está en login y no encuentra el correo
+            if (context === 'LogIn') {
+                return { exists: false, message: 'El correo no está registrado. Por favor crea una cuenta.' };
+            }
+            // Si está en createAccount y no encuentra el correo
+            return { exists: false, message: 'Puedes crear una cuenta con este correo.' };
+        }
+
+        // Si el usuario está verificado
+        if (user.verified) {
+            if (context === 'LogIn') {
+                return { exists: true, verified: true, message: 'Correo encontrado. Inicia sesión.' };
+            }
+            return { exists: true, verified: true, message: 'Ya existe una cuenta con este correo registrado.' };
+        }
+
+        // Si el usuario no está verificado
+        if (context === 'LogIn') {
+            return { exists: true, verified: false, message: 'Tu cuenta no está verificada. Por favor verifica tu correo.' };
+        }
+
+        return { exists: true, verified: false, message: 'Tu correo ya está registrado pero no has verificado. Pulsa el botón para enviarte el código de verificación.' };
+
+    } catch (error) {
+        console.error('Error al buscar el correo:', error);
+        return { exists: false, message: 'Hubo un error al buscar el correo.' };
+    }
+}
+
+
 /**
  * Revoca cualquier código de verificación pendiente si es necesario
  * @param {ObjectId} userId El ID del usuario
@@ -94,5 +131,6 @@ module.exports = {
     sendVerificationCode,
     verifyUserCode,
     updateVerifiedTrue,
+    fyndByEmail,
     revokePendingCodes
 };
