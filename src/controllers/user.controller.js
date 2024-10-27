@@ -1,23 +1,23 @@
 /**
  * -----------------------------------------------------------------
- * Controladores para las funciones de registro
+ * Controladores para las funciones de usuario
  * -----------------------------------------------------------------
  */
-const companyUseCase = require('../usecases/company.usecases');
+const userUseCase = require('../usecases/user.usecases');
 
 /**
  * -----------------------------------------------------------------
- * Controlador para crear registros
+ * Controlador para crear usuario
  * -----------------------------------------------------------------
  * @param {Object} request - Objeto de solicitud de Express
  * @param {Object} response - Objeto de respuesta de Express
  */
-const createCompany = async (request, response) => {
+const createUser = async (request, response) => {
     try {
-        const companyCreated = await companyUseCase.create(request.body);
+        const userCreated = await userUseCase.create(request.body);
         response.json({
             success: true,
-            data: { company: companyCreated }
+            data: { user: userCreated }
         });
     } catch (error) {
         response.status(error.status || 500).json({
@@ -29,89 +29,27 @@ const createCompany = async (request, response) => {
 
 /**
  * -----------------------------------------------------------------
- * Controlador para buscar registro por Id
+ * Controlador para buscar usuario por Id
  * -----------------------------------------------------------------
  * @param {Object} request - Objeto de solicitud de Express
  * @param {Object} response - Objeto de respuesta de Express
  */
-const companyById = async (request, response) => {
-    try {
-        const { id } = request.params;
-        const company = await companyUseCase.getById(id);
-
-        if (!company) {
-            response.status(404).json({
-                success: false,
-                error: 'Company not found'
-            });
-            return;
-        }
-
-        response.json({
-            success: true,
-            data: { company }
-        });
-    } catch (error) {
-        response.status(error.status || 500).json({
-            success: false,
-            error: error.message
-        });
-    }
-};
-
-/**
- * -----------------------------------------------------------------
- * @param {Object} request - Objeto de solicitud de Express
- * @param {Object} response - Objeto de respuesta de Express
- */
-
-const companyAll = async (request, response) => {
-    try {
-        const companies = await companyUseCase.getAll();
-
-        if (!companies || companies.length === 0) {
-            response.status(404).json({
-                success: false,
-                error: 'No companies found'
-            });
-            return;
-        }
-
-        response.json({
-            success: true,
-            data: { companies }
-        });
-    } catch (error) {
-        response.status(error.status || 500).json({
-            success: false,
-            error: error.message
-        });
-    }
-};
-
-/**
- * -----------------------------------------------------------------
- * Controlador para actualizar una compañía
- * -----------------------------------------------------------------
- * @param {Object} request - Objeto de solicitud de Express
- * @param {Object} response - Objeto de respuesta de Express
- */
-const updateCompany = async (request, response) => {
+const userById = async (request, response) => {
     try {
         const { id } = request.params;
-        const updatedCompany = await companyUseCase.update(id, request.body);
+        const user = await userUseCase.getById(id);
 
-        if (!updatedCompany) {
+        if (!user) {
             response.status(404).json({
                 success: false,
-                error: 'Company not found'
+                error: 'User not found'
             });
             return;
         }
 
         response.json({
             success: true,
-            data: { company: updatedCompany }
+            data: { user }
         });
     } catch (error) {
         response.status(error.status || 500).json({
@@ -121,10 +59,99 @@ const updateCompany = async (request, response) => {
     }
 };
 
+/**
+ * -----------------------------------------------------------------
+ * Controlador para obtener todos los usuarios
+ * -----------------------------------------------------------------
+ * @param {Object} request - Objeto de solicitud de Express
+ * @param {Object} response - Objeto de respuesta de Express
+ */
+const getAllUsers = async (req, res) => {
+  try {
+      const users = await userUseCase.getAll();
+      const usersWithoutSensitiveData = users.map(user => {
+          const { password, ...userWithoutPassword } = user.toObject();
+          return userWithoutPassword;
+      });
+      res.json({
+          success: true,
+          data: { users: usersWithoutSensitiveData }
+      });
+  } catch (error) {
+      res.status(error.status || 500).json({
+          success: false,
+          error: error.message
+      });
+  }
+};
+
+/**
+ * -----------------------------------------------------------------
+ * Controlador para actualizar usuario por Id
+ * -----------------------------------------------------------------
+ * @param {Object} request - Objeto de solicitud de Express
+ * @param {Object} response - Objeto de respuesta de Express
+ */
+const updateUser = async (request, response) => {
+    try {
+        const { id } = request.params;
+        const updatedUser = await userUseCase.update(id, request.body);
+
+        if (!updatedUser) {
+            response.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+            return;
+        }
+
+        response.json({
+            success: true,
+            data: { user: updatedUser }
+        });
+    } catch (error) {
+        response.status(error.status || 500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
+/**
+ * -----------------------------------------------------------------
+ * Controlador para eliminar usuario por Id
+ * -----------------------------------------------------------------
+ * @param {Object} request - Objeto de solicitud de Express
+ * @param {Object} response - Objeto de respuesta de Express
+ */
+const deleteUser = async (request, response) => {
+    try {
+        const { id } = request.params;
+        const deletedUser = await userUseCase.delete(id);
+
+        if (!deletedUser) {
+            response.status(404).json({
+                success: false,
+                error: 'User not found'
+            });
+            return;
+        }
+
+        response.json({
+            success: true,
+            message: 'User deleted successfully'
+        });
+    } catch (error) {
+        response.status(error.status || 500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
 
 /**
  * -----------------------------------------------------------------
  * Exportamos los controladores
  * -----------------------------------------------------------------
  */
-module.exports = { createCompany, companyById, companyAll, updateCompany };
+module.exports = { createUser, userById, getAllUsers, updateUser, deleteUser };

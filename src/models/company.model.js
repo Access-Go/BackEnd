@@ -21,7 +21,7 @@ const companySchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Validación de email
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
         minLength: 4,
         maxLength: 30
     },
@@ -29,48 +29,83 @@ const companySchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 6,
-        maxLength: 60 // Aumentamos el tamaño máximo para acomodar el hash
+        maxLength: 60 
     },
     type: {
         type: String,
-        enum: ['company'],
+        enum: ['company'], 
         default: 'company',
         required: true
     },
     companyName: {
         type: String,
-        required: true, // Las compañías deben tener un nombre
+        required: true,
         maxLength: 100
+    },
+    moralPersonName: {
+        type: String,
+        required: true, 
+        maxLength: 100
+    },
+    giro: {
+        type: String,
+        required: true, 
+        maxLength: 50
+    },
+    horario: {
+        abre: { type: String, required: true }, 
+        cierra: { type: String, required: true } 
+    },
+    diasDeServicio: {
+        type: [String],
+        required: true
+    },
+    description: {
+        type: String,
+        maxLength: 500 
     },
     address: {
         type: String,
-        required: true // Dirección de la compañía
+        required: true
     },
     phone: {
         type: String,
-        required: true, // Teléfono de contacto de la compañía
-        match: /^\+?[1-9]\d{1,14}$/ // Validación para número de teléfono
+        required: true, 
+        match: /^\+?[1-9]\d{1,14}$/ 
     },
-    subscription: {
+    rfc: {
         type: String,
-        enum: ['free', 'premium'], // Planes de suscripción
-        default: 'free', // Por defecto es gratuita
+        required: true, 
+        match: /^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{3}$/i 
+    },
+    tipo: {
+        type: String,
+        enum: ['hotel', 'restaurante'],
+        required: true
+    },
+    cuenta: {
+        type: String,
+        enum: ['free', 'premium'],
+        default: 'free', 
         required: true
     },
     premiumFeatures: {
         maxLocations: {
             type: Number,
-            default: 1 // Solo 1 ubicación para cuentas gratuitas
+            default: 1 
         },
         hasStatistics: {
             type: Boolean,
-            default: false // Solo cuentas premium pueden tener acceso a estadísticas
+            default: false 
         },
-        // Puedes agregar más características premium aquí
+    },
+    checkpoints: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'tipo',
     },
     verified: {
         type: Boolean,
-        default: false // Se inicia como no verificado
+        default: false
     },
     created_at: {
         type: Date,
@@ -80,7 +115,7 @@ const companySchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    verificationSentAt: { // Campo para almacenar la hora del envío de verificación
+    verificationSentAt: { 
         type: Date
     }
 });
