@@ -83,13 +83,23 @@ const companySchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: false, // Teléfono de contacto de la compañía
-        match: /^\+?[1-9]\d{1,14}$/ // Validación para número de teléfono
+        required: false, 
+        match: /^\+?[1-9]\d{1,14}$/ 
+    },
+    rfc: {
+        type: String,
+        required: false, 
+        match: /^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{3}$/i 
+    },
+    tipo: {
+        type: String,
+        enum: ['hotel', 'restaurante'],
+        required: false
     },
     cuenta: {
         type: String,
-        enum: ['free', 'premium'], // Planes de suscripción
-        default: 'free', // Por defecto es gratuita
+        enum: ['free', 'premium'],
+        default: 'free', 
         required: false
     },
     premiumFeatures: {
@@ -127,7 +137,11 @@ const companySchema = new mongoose.Schema({
     }
 });
 
-// Middleware para actualizar `updated_at` en cada modificación
+/**
+ * -----------------------------------------------------------------
+ * Middleware para actualizar `updated_at` cuando se modifica el documento
+ * -----------------------------------------------------------------
+ */
 companySchema.pre('save', function (next) {
     this.updated_at = Date.now();
     next();
