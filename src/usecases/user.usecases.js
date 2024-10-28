@@ -78,7 +78,7 @@ const update = async (id, userData) => {
  * @returns - Usuario encontrado por su ID
  */
 const getById = async (id) => {
-    const userFound = await user.findById(id);
+    const userFound = await user.findById(id).select('-password');
     return userFound;
 };
 
@@ -89,7 +89,7 @@ const getById = async (id) => {
  * @returns - Lista de todos los usuarios
  */
 const getAll = async () => {
-    const users = await user.find();
+    const users = await user.find().select('-password');
     return users;
 };
 
