@@ -39,12 +39,7 @@ const companySchema = new mongoose.Schema({
     },
     companyName: {
         type: String,
-        required: true,
-        maxLength: 100
-    },
-    moralPersonName: {
-        type: String,
-        required: true, 
+        required: false, // Las compañías deben tener un nombre
         maxLength: 100
     },
     giro: {
@@ -66,28 +61,18 @@ const companySchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        required: true
+        required: false // Dirección de la compañía
     },
     phone: {
         type: String,
-        required: true, 
-        match: /^\+?[1-9]\d{1,14}$/ 
-    },
-    rfc: {
-        type: String,
-        required: true, 
-        match: /^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{3}$/i 
-    },
-    tipo: {
-        type: String,
-        enum: ['hotel', 'restaurante'],
-        required: true
+        required: false, // Teléfono de contacto de la compañía
+        match: /^\+?[1-9]\d{1,14}$/ // Validación para número de teléfono
     },
     cuenta: {
         type: String,
-        enum: ['free', 'premium'],
-        default: 'free', 
-        required: true
+        enum: ['free', 'premium'], // Planes de suscripción
+        default: 'free', // Por defecto es gratuita
+        required: false
     },
     premiumFeatures: {
         maxLocations: {

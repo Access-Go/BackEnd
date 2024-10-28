@@ -49,13 +49,19 @@ const userSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['user'], // Definimos el tipo como 'user'
-        default: 'user', // Por defecto es un usuario regular
+        enum: ['user'],
+        default: 'user',
         required: true
     },
     birthDate: {
         type: Date,
         required: false,
+    },
+    aboutMe:{
+        type: String,
+        required:false,
+        minLength: 2,
+        maxLength: 300
     },
     verified: {
         type: Boolean,
