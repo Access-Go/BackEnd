@@ -1,32 +1,43 @@
+  /**
+ * -----------------------------------------------------------------
+ * Importamos mongoose
+ * -----------------------------------------------------------------
+ */
 const mongoose = require('mongoose');
 
+/**
+ * -----------------------------------------------------------------
+ * Creamos el nombre del modelo
+ * -----------------------------------------------------------------
+ */
+const modelName = 'Comment';
+
+/**
+ * -----------------------------------------------------------------
+ * Creamos nuestro esquema
+ * -----------------------------------------------------------------
+ */
 const commentSchema = new mongoose.Schema({
-  id_usuario: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Register',
-    required: true
-  },
-  id_empresa: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Company',
-    required: true
-  },
-  contenido: {
-    type: String,
-    required: true
-  },
-  fecha: {
-    type: Date,
-    default: Date.now
-  },
-  calificacion: {
-    type: Number,
-    required: true,
-    min: 1,
-    max: 5
-  }
+    businessId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Company',
+        required: false
+    },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: false
+    },
+    content: {
+        type: String,
+        required: true,
+        maxLength: 500
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    }
 });
 
-const Comment = mongoose.model('Comment', commentSchema);
+module.exports = mongoose.model(modelName, commentSchema);
 
-module.exports = Comment;

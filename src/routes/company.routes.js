@@ -15,28 +15,32 @@ const router = express.Router();
 
 /**
  * --------------------------------------
- * Rutas crear usuario
+ * Rutas para crear una compañía
  * --------------------------------------
  */
-
-router.post('/register', companyController.createCompany);
+router.post('/', companyController.createCompany);
 
 /**
  * --------------------------------------
- * Rutas buscar usuario por id
+ * Ruta para buscar una compañía por ID
  * --------------------------------------
  */
 router.get('/:id', companyController.companyById);
 
 /**
  * --------------------------------------
- * Rutas buscar todos los registros
+ * Ruta para obtener todas las compañías
  * --------------------------------------
  */
-
 router.get('/', companyController.companyAll);
 
-console.log('Company de registro cargadas');
+/**
+ * --------------------------------------
+ * Ruta para actualizar una compañía por ID
+ * --------------------------------------
+ */
+router.put('/:id', companyController.updateCompany);
+
 /**
  * --------------------------------------
  * Exportamos el router

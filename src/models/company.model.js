@@ -21,7 +21,7 @@ const companySchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Validación de email
+        match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, 
         minLength: 4,
         maxLength: 30
     },
@@ -29,11 +29,11 @@ const companySchema = new mongoose.Schema({
         type: String,
         required: true,
         minLength: 6,
-        maxLength: 60 // Aumentamos el tamaño máximo para acomodar el hash
+        maxLength: 60 
     },
     type: {
         type: String,
-        enum: ['company'],
+        enum: ['company'], 
         default: 'company',
         required: true
     },
@@ -41,6 +41,23 @@ const companySchema = new mongoose.Schema({
         type: String,
         required: false, // Las compañías deben tener un nombre
         maxLength: 100
+    },
+    giro: {
+        type: String,
+        required: true, 
+        maxLength: 50
+    },
+    horario: {
+        abre: { type: String, required: true }, 
+        cierra: { type: String, required: true } 
+    },
+    diasDeServicio: {
+        type: [String],
+        required: true
+    },
+    description: {
+        type: String,
+        maxLength: 500 
     },
     address: {
         type: String,
@@ -51,7 +68,7 @@ const companySchema = new mongoose.Schema({
         required: false, // Teléfono de contacto de la compañía
         match: /^\+?[1-9]\d{1,14}$/ // Validación para número de teléfono
     },
-    subscription: {
+    cuenta: {
         type: String,
         enum: ['free', 'premium'], // Planes de suscripción
         default: 'free', // Por defecto es gratuita
@@ -60,17 +77,20 @@ const companySchema = new mongoose.Schema({
     premiumFeatures: {
         maxLocations: {
             type: Number,
-            default: 1 // Solo 1 ubicación para cuentas gratuitas
+            default: 1 
         },
         hasStatistics: {
             type: Boolean,
-            default: false // Solo cuentas premium pueden tener acceso a estadísticas
+            default: false 
         },
-        // Puedes agregar más características premium aquí
+    },
+    checkpoints: {
+        type: mongoose.Schema.Types.ObjectId,
+        refPath: 'tipo',
     },
     verified: {
         type: Boolean,
-        default: false // Se inicia como no verificado
+        default: false
     },
     created_at: {
         type: Date,
@@ -80,7 +100,7 @@ const companySchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    verificationSentAt: { // Campo para almacenar la hora del envío de verificación
+    verificationSentAt: { 
         type: Date
     }
 });
