@@ -44,16 +44,16 @@ const companySchema = new mongoose.Schema({
     },
     giro: {
         type: String,
-        required: true, 
+        required: false, 
         maxLength: 50
     },
     horario: {
-        abre: { type: String, required: true }, 
-        cierra: { type: String, required: true } 
+        abre: { type: String, required: false }, 
+        cierra: { type: String, required: false } 
     },
     diasDeServicio: {
         type: [String],
-        required: true
+        required: false
     },
     description: {
         type: String,
@@ -105,16 +105,16 @@ const companySchema = new mongoose.Schema({
     }
 });
 
-/**
- * -----------------------------------------------------------------
- * Middleware para actualizar `updated_at` cuando se modifica el documento
- * -----------------------------------------------------------------
- */
+// Middleware para actualizar `updated_at` en cada modificación
 companySchema.pre('save', function (next) {
     this.updated_at = Date.now();
     next();
 });
 
+companySchema.pre('findOneAndUpdate', function (next) {
+    this.set({ updated_at: Date.now() });
+    next();
+});
 /**
  * -----------------------------------------------------------------
  * Exportamos el modelo de compañía

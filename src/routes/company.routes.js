@@ -22,10 +22,10 @@ router.post('/', companyController.createCompany);
 
 /**
  * --------------------------------------
- * Ruta para buscar una compañía por ID
+ * Ruta para eliminar una compañía por ID
  * --------------------------------------
  */
-router.get('/:id', companyController.companyById);
+router.delete('/:id', companyController.deleteCompany);
 
 /**
  * --------------------------------------

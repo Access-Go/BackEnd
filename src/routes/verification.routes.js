@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { sendVerificationCode, verifyUserCode, updateVerifiedTrue, fyndByEmail } = require('../usecases/verification.usecases');
-const User = require('../models/register.model');
+const Users = require('../models/user.model');
 
 
 // Ruta para enviar el código de verificación
@@ -10,7 +10,7 @@ router.post('/send-code', async (req, res) => {
 
     try {
         // Verifica si el usuario existe
-        const user = await User.findOne({ email });
+        const user = await Users.findOne({ email });
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }

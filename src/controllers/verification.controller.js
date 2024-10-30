@@ -1,5 +1,5 @@
 const { sendVerificationCode, verifyUserCode, updateVerifiedTrue,  fyndByEmail } = require('../usecases/verification.usecases');
-const User = require('../models/register.model');
+const Users = require('../models/user.model');
 
 /**
  * Controlador para enviar un código de verificación al correo del usuario
@@ -11,7 +11,7 @@ const sendCodeController = async (req, res) => {
 
     try {
         // Busca al usuario por el correo electrónico
-        const user = await User.findOne({ email });
+        const user = await Users.findOne({ email });
 
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });

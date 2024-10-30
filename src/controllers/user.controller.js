@@ -4,7 +4,8 @@
  * -----------------------------------------------------------------
  */
 const userUseCase = require('../usecases/user.usecases');
-
+const RegisteredEmail = require('../models/registeredEmail.model.js');
+const User = require('../models/user.model'); 
 /**
  * -----------------------------------------------------------------
  * Controlador para crear usuario
@@ -12,15 +13,33 @@ const userUseCase = require('../usecases/user.usecases');
  * @param {Object} request - Objeto de solicitud de Express
  * @param {Object} response - Objeto de respuesta de Express
  */
+
+/**
+ * Crear un usuario
+ */
 const createUser = async (request, response) => {
     try {
-        const userCreated = await userUseCase.create(request.body);
+        const { email } = request.body;
+
+        // Busca el correo en `RegisteredEmails`
+        const emailExists = await RegisteredEmail.findOne({ email });
+        if (emailExists) {
+            return response.status(400).json({
+                success: false,
+                message: 'El correo ya está registrado.'
+            });
+        }
+
+        // Crea el usuario y añade el correo a `RegisteredEmails`
+        const userCreated = await User.create(request.body);
+        await RegisteredEmail.create({ email });
+        
         response.json({
             success: true,
             data: { user: userCreated }
         });
     } catch (error) {
-        response.status(error.status || 500).json({
+        response.status(500).json({
             success: false,
             error: error.message
         });
@@ -34,31 +53,16 @@ const createUser = async (request, response) => {
  * @param {Object} request - Objeto de solicitud de Express
  * @param {Object} response - Objeto de respuesta de Express
  */
-const userById = async (request, response) => {
+const userById = async (req, res) => {
     try {
-        const { id } = request.params;
-        const user = await userUseCase.getById(id);
+        const user = await User.findById(req.params.id).populate('company'); // Usamos populate
+        if (!user) return res.status(404).json({ success: false, error: 'User not found' });
 
-        if (!user) {
-            response.status(404).json({
-                success: false,
-                error: 'User not found'
-            });
-            return;
-        }
-
-        response.json({
-            success: true,
-            data: { user }
-        });
+        res.json({ success: true, data: { user } });
     } catch (error) {
-        response.status(error.status || 500).json({
-            success: false,
-            error: error.message
-        });
+        res.status(500).json({ success: false, error: error.message });
     }
 };
-
 /**
  * -----------------------------------------------------------------
  * Controlador para obtener todos los usuarios
@@ -149,9 +153,28 @@ const deleteUser = async (request, response) => {
     }
 };
 
+const getUserCompanies = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const user = await User.findById(userId).populate('companies');
+        
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        res.json({
+            success: true,
+            data: { companies: user.companies }
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+
 /**
  * -----------------------------------------------------------------
  * Exportamos los controladores
  * -----------------------------------------------------------------
  */
-module.exports = { createUser, userById, getAllUsers, updateUser, deleteUser };
+module.exports = { createUser, userById, getAllUsers, updateUser, deleteUser, getUserCompanies };

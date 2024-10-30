@@ -1,24 +1,20 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-// Esquema de verificación
 const verificationSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'register',
-        required: true
+        required: true,
+        ref: "Users" // Refleja el nombre del modelo de usuario
     },
     code: {
         type: String,
         required: true
     },
-    expiresAt: {
+    createdAt: {
         type: Date,
-        required: true
+        default: Date.now,
+        expires: 3600 // Código de verificación expira en una hora
     }
 });
 
-// Índice TTL para eliminar códigos de verificación expirados
-verificationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-
-// Exporta el modelo 'Verification'
-module.exports = mongoose.model('Verification', verificationSchema);
+module.exports = mongoose.model("Verification", verificationSchema);

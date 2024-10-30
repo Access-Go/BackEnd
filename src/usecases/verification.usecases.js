@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const Verification = require('../models/verification');
 const sendEmail = require('../utils/sendEmail.js'); // Función para enviar correos
-const Register = require('../models/register.model')
+const User = require('../models/user.model.js')
 
 
 /**
@@ -72,7 +72,7 @@ async function verifyUserCode(userId, code) {
 
 async function updateVerifiedTrue(userId) {
     // Busca al usuario por ID y actualiza su estado de verificación
-    const updatedUser = await Register.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
         userId, 
         { verified: true }, 
         { new: true } // Devuelve el documento actualizado
@@ -83,7 +83,7 @@ async function updateVerifiedTrue(userId) {
 async function fyndByEmail(email, context) {
     try {
         // Busca al usuario por email
-        const user = await Register.findOne({ email: email });
+        const user = await User.findOne({ email: email });
 
         // Si no se encuentra un usuario con ese correo
         if (!user) {
