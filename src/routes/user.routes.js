@@ -48,6 +48,12 @@ router.put('/:id', userController.updateUser);
  */
 router.delete('/:id', userController.deleteUser);
 
+
+// Define una ruta para obtener el usuario con su compañía
+
+router.get('/:userId/companies', userController.getUserCompanies);
+
+
 /**
  * --------------------------------------
  * Exportamos el router
