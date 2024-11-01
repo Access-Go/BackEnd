@@ -6,6 +6,21 @@
 const userUseCase = require('../usecases/user.usecases');
 const RegisteredEmail = require('../models/registeredEmail.model.js');
 const User = require('../models/user.model'); 
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Carpeta donde se guardarán las imágenes
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueSuffix + path.extname(file.originalname)); // Nombre único para cada archivo
+    }
+});
+
+const upload = multer({ storage: storage });
+
 /**
  * -----------------------------------------------------------------
  * Controlador para crear usuario
@@ -21,7 +36,7 @@ const createUser = async (request, response) => {
     try {
         const { email } = request.body;
 
-        // Busca el correo en `RegisteredEmails`
+        // Verifica si el correo ya está registrado
         const emailExists = await RegisteredEmail.findOne({ email });
         if (emailExists) {
             return response.status(400).json({
@@ -30,10 +45,16 @@ const createUser = async (request, response) => {
             });
         }
 
+        // Agrega la ruta de la imagen si se proporciona
+        const userData = {
+            ...request.body,
+            profilePicture: request.file ? `/uploads/${request.file.filename}` : null
+        };
+
         // Crea el usuario y añade el correo a `RegisteredEmails`
-        const userCreated = await User.create(request.body);
+        const userCreated = await userUseCase.create(userData);
         await RegisteredEmail.create({ email });
-        
+
         response.json({
             success: true,
             data: { user: userCreated }
