@@ -10,6 +10,10 @@ const eventRoutes = require('./routes/event.routes');
 const promoRoutes = require('./routes/promo.routes');
 const path = require('path');
 
+require('dotenv').config();
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
+
 const cors = require('cors');
 
 const app = express();
