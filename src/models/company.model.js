@@ -63,6 +63,14 @@ const companySchema = new mongoose.Schema({
         type: String,
         required: false // Dirección de la compañía
     },
+    latitude:{
+        type: Number, // Asegúrate de que sea de tipo número
+        required: false,
+    },
+    longitude:{
+        type: Number, // Asegúrate de que sea de tipo número
+        required: false,
+    },
     phone: {
         type: String,
         required: false, // Teléfono de contacto de la compañía

@@ -24,9 +24,4 @@ router.post("/", async (request, response) => {
     }
 });
 
-// Aplica el middleware a las rutas que necesitan autenticación
-router.use(auth);
-
-// Otras rutas protegidas aquí
-
 module.exports = router;
