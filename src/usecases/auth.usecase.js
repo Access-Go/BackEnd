@@ -1,37 +1,25 @@
-const createError = require("http-errors")
-const register = require("../models/register.model")
-const jwt = require("../lib/jwt")
-const encrypt = require("../lib/encrypt")
+const User = require('../models/user.model');
+const bcrypt = require('bcrypt');
+const jwt = require('../lib/jwt'); // Asegúrate de que apunta a tu configuración JWT
 
-// const login = async (email, password) => {
-//     const user = await users.findOne({ email: email });
+const login = async (email, password) => {
+    const user = await User.findOne({ email });
 
-//     if (!user) throw new createError(401, 'Invalid email or password');
-
-//     const isValidPassword = await encrypt.compare(password, user.password);
-
-//     if (!isValidPassword) throw new createError(401, 'Invalid email or password');
-
-//     const token = jwt.sign({ id: user.id });
-
-//     return token;
-//}
-async function login (email, password) {
-    const user = await register.findOne({ email: email})
-
-    if(!user) {
-        throw createError(401, "Invalid data")
+    if (!user) {
+        throw new Error('Invalid email or password');
     }
 
-    const isPasswordValid = await encrypt.compare(password, user.password)
-
-    if(!isPasswordValid) {
-        throw createError(401, "Invalid data")
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+        throw new Error('Invalid email or password');
     }
 
-    const token = jwt.sign({ id: user._id })
-    // return isPasswordValid
-    return token
-}
+    // Genera el token con la función `sign`
+    const token = jwt.sign({ id: user._id });
 
-module.exports = { login }
+    return token;
+};
+
+module.exports = {
+    login
+};

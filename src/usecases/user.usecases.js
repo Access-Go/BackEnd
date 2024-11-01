@@ -16,10 +16,14 @@ const saltRounds = 10; // Número de rondas de salt para bcrypt
  * @returns - Nuevo usuario creado
  */
 const create = async (userData) => {
-    // Verifica si el usuario ya existe
-    const userFound = await user.find({ email: userData.email });
+    // Verifica si el usuario ya existe usando findOne
+    const userFound = await user.findOne({ email: userData.email });
 
-    if (userFound.length > 0) throw new Error('El usuario con este correo electrónico ya existe');
+    console.log("Usuario encontrado:", userFound);
+
+    if (userFound) {
+        throw new Error('El usuario con este correo electrónico ya existe');
+    }
 
     // Encripta la contraseña
     const hashedPassword = await bcrypt.hash(userData.password, saltRounds);
@@ -37,6 +41,7 @@ const create = async (userData) => {
     const { password, ...userWithoutPassword } = newUser.toObject();
     return userWithoutPassword;
 };
+
 
 /**
  * --------------------------------------
