@@ -4,6 +4,7 @@
  * -----------------------------------------------------------------
  */
 const companyUseCase = require('../usecases/company.usecases');
+const RegisteredEmail = require('../models/registeredEmail.model.js');
 
 /**
  * -----------------------------------------------------------------
@@ -26,7 +27,7 @@ const createCompany = async (request, response) => {
         }
 
         // Crea la compañía y añade el correo a `RegisteredEmails`
-        const companyCreated = await Company.create(request.body);
+        const companyCreated = await companyUseCase.create(request.body);
         await RegisteredEmail.create({ email });
         
         response.json({
