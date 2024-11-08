@@ -16,6 +16,7 @@ const login = async (email, password) => {
     let type = null;
     let cuenta = null; // Variable para almacenar el tipo de cuenta si es una compañía
 
+
     if (user) {
         isPasswordCorrect = await bcrypt.compare(password, user.password);
         id = user._id;
@@ -24,7 +25,9 @@ const login = async (email, password) => {
         isPasswordCorrect = await bcrypt.compare(password, company.password);
         id = company._id;
         type = company.type;
+
         cuenta = company.cuenta; // Obtener el tipo de cuenta (free o premium)
+
     }
 
     if (!isPasswordCorrect) {
@@ -36,6 +39,7 @@ const login = async (email, password) => {
 
     // Devolver un objeto con el token, type, id, y cuenta (si es una compañía)
     return { token, type, id, cuenta };
+
 };
 
 module.exports = {

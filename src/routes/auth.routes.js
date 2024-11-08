@@ -7,6 +7,7 @@ const router = express.Router();
 router.post("/", async (request, response) => {
     try {
         const { email, password } = request.body;
+
         
         // Obtener token, type, id, y cuenta (si es compañía) del resultado de login
         const { token, type, id, cuenta } = await authUseCase.login(email, password);
