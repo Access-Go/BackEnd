@@ -1,6 +1,4 @@
-/**
- * --------------------------------------
- * Importamos las dependencias necesarias
+/* Importamos las dependencias necesarias
  * --------------------------------------
  */
 const express = require('express');

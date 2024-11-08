@@ -74,7 +74,21 @@ const getAll = async () => {
 
 /**
  * -----------------------------------------
+ * Función para eliminar una compañía por su ID
+ * -----------------------------------------
+ * @param {string} id - ID de la compañía a eliminar
+ * @returns - Mensaje de éxito si se elimina la compañía
+ */
+
+const removeCompany = async (id) => {
+    const deletedCompany = await Company.findByIdAndDelete(id);
+    if (!deletedCompany) throw new Error('Company not found');
+    return { message: 'Company successfully deleted' };
+};
+
+/**
+ * -----------------------------------------
  * Exportamos las funciones
  * -----------------------------------------
  */
-module.exports = { create, getById, getAll, update };
+module.exports = { create, getById, getAll, update, removeCompany };
