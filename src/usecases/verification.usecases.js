@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const Verification = require('../models/verification');
 const sendEmail = require('../utils/sendEmail.js'); // Función para enviar correos
 const User = require('../models/user.model.js')
+const Company = require("../models/company.model.js")
 
 
 /**
@@ -71,21 +72,36 @@ async function verifyUserCode(userId, code) {
 }
 
 async function updateVerifiedTrue(userId) {
-    // Busca al usuario por ID y actualiza su estado de verificación
-    const updatedUser = await User.findByIdAndUpdate(
+    // Intenta encontrar y actualizar en User
+    let updatedUser = await User.findByIdAndUpdate(
         userId, 
         { verified: true }, 
         { new: true } // Devuelve el documento actualizado
     );
-    return updatedUser;
+
+    // Si no se encontró en User, busca en Company
+    if (!updatedUser) {
+        updatedUser = await Company.findByIdAndUpdate(
+            userId, 
+            { verified: true }, 
+            { new: true }
+        );
+    }
+
+    return updatedUser; // Retorna el documento actualizado o null si no se encontró en ninguno
 }
 
 async function fyndByEmail(email, context) {
     try {
-        // Busca al usuario por email
-        const user = await User.findOne({ email: email });
+        // Busca en el modelo User por el email
+        let user = await User.findOne({ email: email });
 
-        // Si no se encuentra un usuario con ese correo
+        // Si no se encuentra en User, busca en Company
+        if (!user) {
+            user = await Company.findOne({ email: email });
+        }
+
+        // Si no se encuentra un usuario ni en User ni en Company
         if (!user) {
             // Si está en login y no encuentra el correo
             if (context === 'LogIn') {
@@ -95,7 +111,7 @@ async function fyndByEmail(email, context) {
             return { exists: false, message: 'Puedes crear una cuenta con este correo.' };
         }
 
-        // Si el usuario está verificado
+        // Si el usuario o compañía está verificado
         if (user.verified) {
             if (context === 'LogIn') {
                 return { exists: true, verified: true, message: 'Correo encontrado. Inicia sesión.' };
@@ -103,7 +119,7 @@ async function fyndByEmail(email, context) {
             return { exists: true, verified: true, message: 'Ya existe una cuenta con este correo registrado.' };
         }
 
-        // Si el usuario no está verificado
+        // Si el usuario o compañía no está verificado
         if (context === 'LogIn') {
             return { exists: true, verified: false, message: 'Tu cuenta no está verificada. Por favor verifica tu correo.' };
         }

@@ -7,11 +7,19 @@ const router = express.Router();
 router.post("/", async (request, response) => {
     try {
         const { email, password } = request.body;
-        const token = await authUseCase.login(email, password);
+        
+        // Obtener token, type, id, y cuenta (si es compañía) del resultado de login
+        const { token, type, id, cuenta } = await authUseCase.login(email, password);
+
+        // Responder con `cuenta` solo si está disponible
+        const responseData = { token, type, id };
+        if (cuenta) {
+            responseData.cuenta = cuenta;
+        }
 
         response.json({
             success: true,
-            data: { token },
+            data: responseData,
         });
     } catch (error) {
         response.status(401).json({

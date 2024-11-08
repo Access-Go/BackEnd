@@ -45,5 +45,11 @@ router.put('/:id', companyController.updateCompany);
  * --------------------------------------
  * Exportamos el router
  * --------------------------------------
+ * 
  */
+
+
+// Obtener una compañía por ID
+router.get('/:id', companyController.getCompanyById);
+
 module.exports = router;

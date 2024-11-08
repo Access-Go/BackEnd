@@ -11,7 +11,7 @@ const router = express.Router();
 router.post('/', commentController.createComment);
 
 // Ruta para obtener todos los comentarios de un negocio específico
-router.get('/business/:businessId', commentController.getCommentsByBusiness);
+router.get('/company/:companyId', commentController.getCommentsByBusiness);
 
 // Ruta para obtener todos los comentarios de un usuario específico
 router.get('/user/:userId', commentController.getCommentsByUser);

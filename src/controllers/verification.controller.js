@@ -1,5 +1,6 @@
 const { sendVerificationCode, verifyUserCode, updateVerifiedTrue,  fyndByEmail } = require('../usecases/verification.usecases');
 const Users = require('../models/user.model');
+const Company = require("../models/company.model")
 
 /**
  * Controlador para enviar un código de verificación al correo del usuario
@@ -10,15 +11,25 @@ const sendCodeController = async (req, res) => {
     const { email } = req.body;
 
     try {
-        // Busca al usuario por el correo electrónico
-        const user = await Users.findOne({ email });
+        // Busca el correo en el modelo Users
+        let user = await Users.findOne({ email });
 
+        // Si no se encuentra en Users, busca en el modelo Company
+        if (!user) {
+            user = await Company.findOne({ email });
+        }
+
+        // Si no se encuentra ni en Users ni en Company
         if (!user) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
 
+        // Determina el ID y el modelo para la referencia
+        const userId = user._id;
+        const userModel = user instanceof Users ? "User" : "Company";
+
         // Llama al caso de uso para enviar el código de verificación
-        await sendVerificationCode(user._id, email);
+        await sendVerificationCode(userId, email, userModel); // Asegúrate de que `sendVerificationCode` reciba `userModel` si es necesario
 
         res.status(200).json({ message: 'Código de verificación enviado al correo.' });
     } catch (error) {
@@ -26,6 +37,7 @@ const sendCodeController = async (req, res) => {
         res.status(500).json({ message: 'Hubo un error al enviar el código de verificación.' });
     }
 };
+
 
 /**
  * Controlador para verificar el código ingresado por el usuario
