@@ -4,6 +4,7 @@
  * -------------------------------------------------------------
  */
 const Company = require('../models/company.model');
+const Ranking = require('../models/ranking.model');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -62,6 +63,23 @@ const update = async (id, updateData) => {
 };
 
 /**
+ * --------------------------------------
+ * Función para actualizar el rating de una compañía
+ * --------------------------------------
+ * @param {string} id - ID de la compañía a actualizar
+ * @param {Object} updateData - Datos de la compañía a actualizar
+ * @returns - Compañía actualizada sin campo `password`
+ */
+const updateCompanyRating = async (businessId) => {
+    const ratings = await Ranking.find({ businessId });
+    const totalRatings = ratings.length;
+    const sumOfRatings = ratings.reduce((sum, rating) => sum + rating.stars, 0);
+    const averageRating = totalRatings > 0 ? (sumOfRatings / totalRatings).toFixed(2) : 0;
+
+    await Company.findByIdAndUpdate(businessId, { averageRating });
+};
+
+/**
  * -----------------------------------------
  * Función para obtener todas las compañías
  * -----------------------------------------
@@ -91,4 +109,4 @@ const removeCompany = async (id) => {
  * Exportamos las funciones
  * -----------------------------------------
  */
-module.exports = { create, getById, getAll, update, removeCompany };
+module.exports = { create, getById, getAll, update, removeCompany, updateCompanyRating };
