@@ -39,7 +39,17 @@ const companySchema = new mongoose.Schema({
     },
     companyName: {
         type: String,
-        required: false, // Las compañías deben tener un nombre
+        required: false, 
+        maxLength: 100
+    },
+    rfc: {
+        type: String,
+        required: false, 
+        maxLength: 13
+    },
+    representanteLegal: {
+        type: String,
+        required: false, 
         maxLength: 100
     },
     giro: {
@@ -91,6 +101,10 @@ const companySchema = new mongoose.Schema({
             type: Boolean,
             default: false 
         },
+    },
+    averageRating: {
+        type: Number,
+        default: 0,
     },
     checkpoints: {
         type: mongoose.Schema.Types.ObjectId,

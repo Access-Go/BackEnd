@@ -105,6 +105,23 @@ const updateCompany = async (request, response) => {
     }
 };
 
+const updateCompanyRating = async (request, response) => {
+    try {
+        const { businessId } = request.params;
+        await companyUseCase.updateCompanyRating(businessId);
+
+        response.json({
+            success: true,
+            message: 'Company rating updated successfully'
+        });
+    } catch (error) {
+        response.status(error.status || 500).json({
+            success: false,
+            error: error.message
+        });
+    }
+};
+
 /**
  * Eliminar compañía por ID
  */
@@ -118,12 +135,6 @@ const deleteCompany = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
-
-/**
- * -----------------------------------------------------------------
- * Exportamos los controladores
- * -----------------------------------------------------------------
- */
 
 /**
  * -----------------------------------------------------------------
@@ -157,4 +168,10 @@ const getCompanyById = async (req, res) => {
 };
 
 
-module.exports = { createCompany, deleteCompany, companyAll, updateCompany, getCompanyById };
+/**
+ * -----------------------------------------------------------------
+ * Exportamos los controladores
+ * -----------------------------------------------------------------
+ */
+
+module.exports = { createCompany, deleteCompany, companyAll, updateCompany, getCompanyById, updateCompanyRating };
