@@ -15,6 +15,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+
 /**
  * --------------------------------------
  * Creamos el router de Express
@@ -61,6 +62,9 @@ router.delete('/:id', userController.deleteUser);
 // Define una ruta para obtener el usuario con su compañía
 
 router.get('/:userId/companies', userController.getUserCompanies);
+
+
+
 
 
 /**
