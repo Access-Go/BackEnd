@@ -39,7 +39,6 @@ const router = express.Router();
  */
 router.post('/', commentController.createComment);
 
-
 /**
  * @swagger
  * /api/comments/company/{companyId}:
@@ -75,8 +74,6 @@ router.post('/', commentController.createComment);
  *         description: Company not found
  */
 
-
-// Ruta para obtener todos los comentarios de un negocio específico
 router.get('/company/:businessId', commentController.getCommentsByBusiness);
 
 /**
