@@ -74,7 +74,7 @@ router.post('/', commentController.createComment);
  *       404:
  *         description: Company not found
  */
-router.get('/company/:companyId', commentController.getCommentsByBusiness);
+
 
 // Ruta para obtener todos los comentarios de un negocio específico
 router.get('/company/:businessId', commentController.getCommentsByBusiness);
