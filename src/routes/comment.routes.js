@@ -73,6 +73,7 @@ router.post('/', commentController.createComment);
  *       404:
  *         description: Company not found
  */
+
 router.get('/company/:businessId', commentController.getCommentsByBusiness);
 
 /**
