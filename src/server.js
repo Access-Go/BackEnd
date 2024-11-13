@@ -11,6 +11,7 @@ const eventRoutes = require('./routes/event.routes');
 const promoRoutes = require('./routes/promo.routes');
 const rankingRoutes = require('./routes/ranking.routes');
 const path = require('path');
+const  accessibilityRoutes = require("./routes/accesibility.routes")
 
 require('dotenv').config();
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
@@ -21,7 +22,7 @@ const cors = require('cors');
 const app = express();
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://accessgo--two.vercel.app, https://access-go-dev.vercel.app'],
+    origin: ['http://localhost:3000', 'https://accessgo--two.vercel.app', 'https://access-go-dev.vercel.app'],
     optionsSuccessStatus: 200,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
@@ -38,7 +39,7 @@ if (process.env.NODE_ENV === 'development') {
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 }
 
-
+app.use('/api/accesibilidad', accessibilityRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/comments', commentRoutes);
@@ -50,6 +51,7 @@ app.use('/api/promos', promoRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes)
+
 
 app.get("/", (request, response) => {
     response.json({
