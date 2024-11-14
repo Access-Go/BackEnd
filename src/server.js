@@ -1,6 +1,9 @@
 const express = require('express');
 const { swaggerUi, specs } = require('./swaggerConfig');
 
+//para aws
+const uploadRoute = require('./routes/upload.routes'); // Ruta de carga
+
 const companyRoutes = require('./routes/company.routes');
 const phoneRoutes = require('./routes/phone.routes');
 const verificationRouter = require('./routes/verification.routes');
@@ -48,6 +51,9 @@ app.use('/api/verification', verificationRouter);
 app.use('/api/events', eventRoutes);
 app.use('/api/promos', promoRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+//para aws
+app.use('/api', uploadRoute);
 
 app.use('/api/auth', authRoutes)
 
