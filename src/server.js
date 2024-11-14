@@ -1,4 +1,5 @@
 const express = require('express');
+const { swaggerUi, specs } = require('./swaggerConfig');
 
 //para aws
 const uploadRoute = require('./routes/upload.routes'); // Ruta de carga
@@ -11,6 +12,7 @@ const userRoutes = require('./routes/user.routes');
 const commentRoutes = require('./routes/comment.routes');
 const eventRoutes = require('./routes/event.routes');
 const promoRoutes = require('./routes/promo.routes');
+const rankingRoutes = require('./routes/ranking.routes');
 const path = require('path');
 
 require('dotenv').config();
@@ -22,17 +24,28 @@ const cors = require('cors');
 const app = express();
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
-    optionsSuccessStatus: 200
+    origin: ['http://localhost:3000', 'https://accessgo--two.vercel.app', 'https://access-go-dev.vercel.app'],
+    optionsSuccessStatus: 200,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
 
 app.use(cors(corsOptions));
 
 app.use(express.json());
 
+// Swagger debe ir antes de las otras rutas
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(specs, { explorer: true }));
+if (process.env.NODE_ENV === 'development') {
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
+}
+
+
 app.use('/api/users', userRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/rankings', rankingRoutes);
 app.use('/api', phoneRoutes);
 app.use('/api/verification', verificationRouter);
 app.use('/api/events', eventRoutes);

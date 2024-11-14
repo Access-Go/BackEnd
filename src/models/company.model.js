@@ -39,7 +39,17 @@ const companySchema = new mongoose.Schema({
     },
     companyName: {
         type: String,
-        required: false, // Las compañías deben tener un nombre
+        required: false, 
+        maxLength: 100
+    },
+    rfc: {
+        type: String,
+        required: false, 
+        maxLength: 13
+    },
+    representanteLegal: {
+        type: String,
+        required: false, 
         maxLength: 100
     },
     giro: {
@@ -73,13 +83,23 @@ const companySchema = new mongoose.Schema({
     },
     phone: {
         type: String,
-        required: false, // Teléfono de contacto de la compañía
-        match: /^\+?[1-9]\d{1,14}$/ // Validación para número de teléfono
+        required: false, 
+        match: /^\+?[1-9]\d{1,14}$/ 
+    },
+    rfc: {
+        type: String,
+        required: false, 
+        match: /^[A-ZÑ&]{3,4}\d{6}[A-Z\d]{3}$/i 
+    },
+    tipo: {
+        type: String,
+        enum: ['hotel', 'restaurante'],
+        required: false
     },
     cuenta: {
         type: String,
-        enum: ['free', 'premium'], // Planes de suscripción
-        default: 'free', // Por defecto es gratuita
+        enum: ['free', 'premium'],
+        default: 'free', 
         required: false
     },
     premiumFeatures: {
@@ -91,6 +111,10 @@ const companySchema = new mongoose.Schema({
             type: Boolean,
             default: false 
         },
+    },
+    averageRating: {
+        type: Number,
+        default: 0,
     },
     checkpoints: {
         type: mongoose.Schema.Types.ObjectId,
@@ -113,7 +137,11 @@ const companySchema = new mongoose.Schema({
     }
 });
 
-// Middleware para actualizar `updated_at` en cada modificación
+/**
+ * -----------------------------------------------------------------
+ * Middleware para actualizar `updated_at` cuando se modifica el documento
+ * -----------------------------------------------------------------
+ */
 companySchema.pre('save', function (next) {
     this.updated_at = Date.now();
     next();
