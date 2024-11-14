@@ -1,2 +1,26 @@
+# Node.js
 node_modules/
+
+# Entornos de desarrollo y producción
 .env
+
+# Logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+*.log
+
+# Directorios de VSCode
+.vscode/
+
+# Dependencias globales de NPM
+package-lock.json
+yarn.lock
+
+# Sistema operativo
+.DS_Store        # macOS
+Thumbs.db        # Windows
+
+# Archivos de configuración
+.idea/           # Archivos de configuración de JetBrains (IntelliJ, WebStorm, etc.)
+*.swp            # Archivos temporales de vim
