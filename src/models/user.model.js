@@ -6,7 +6,7 @@ const schema = new mongoose.Schema({
     profilePicture: {
         type: String,
         required: false,
-        maxLength: 100
+        maxLength: 100,
     },
     firstName: {
         type: String,
