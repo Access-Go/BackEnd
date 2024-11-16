@@ -3,6 +3,7 @@ const { swaggerUi, specs } = require('./swaggerConfig');
 
 //para aws
 const uploadRoute = require('./routes/upload.routes'); // Ruta de carga
+const uploadRouteCPP = require('./routes/uploadCPP.routes'); //CPP significa CompanyProfilePicture
 
 const companyRoutes = require('./routes/company.routes');
 const phoneRoutes = require('./routes/phone.routes');
@@ -54,6 +55,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //para aws
 app.use('/api', uploadRoute);
+app.use('/api', uploadRouteCPP); //CPP significa CompanyProfilePicture
 
 app.use('/api/auth', authRoutes)
 
