@@ -62,7 +62,7 @@ app.use('/api/auth', authRoutes)
 
 app.get("/", (request, response) => {
     response.json({
-        message: "Api accessGo",
+        message: "Api accessGo v1.2",
         success: "True"
     })
 })
