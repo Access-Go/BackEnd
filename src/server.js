@@ -14,6 +14,7 @@ const commentRoutes = require('./routes/comment.routes');
 const eventRoutes = require('./routes/event.routes');
 const promoRoutes = require('./routes/promo.routes');
 const rankingRoutes = require('./routes/ranking.routes');
+const volunteerRoutes = require('./routes/volunteer.routes');
 const path = require('path');
 
 require('dotenv').config();
@@ -35,7 +36,6 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-// Swagger debe ir antes de las otras rutas
 app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(specs, { explorer: true }));
 if (process.env.NODE_ENV === 'development') {
@@ -46,6 +46,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use('/api/users', userRoutes);
 app.use('/api/company', companyRoutes);
 app.use('/api/comments', commentRoutes);
+app.use('/api/volunteers', volunteerRoutes);
 app.use('/api/rankings', rankingRoutes);
 app.use('/api', phoneRoutes);
 app.use('/api/verification', verificationRouter);
