@@ -3,7 +3,7 @@ const router = express.Router();
 const { upload, uploadToS3 } = require('../lib/multerCPP');  // Importa la configuración de multer-s3
 
 // Ruta para subir la imagen y guardar la URL en el perfil del usuario
-router.post('/uploadCPP', upload.single('image'), uploadToS3, async (req, res) => {
+router.post('/uploadcpp', upload.single('image'), uploadToS3, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No file uploaded' });
