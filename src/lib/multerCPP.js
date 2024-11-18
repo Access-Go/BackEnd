@@ -2,7 +2,7 @@ const multer = require('multer');
 const { S3Client, PutObjectCommand, ListObjectsV2Command, DeleteObjectsCommand } = require('@aws-sdk/client-s3');  // Usamos AWS SDK v3
 const s3 = require('./aws'); 
 const multerS3 = require('multer-s3');
-const User = require('../models/user.model');  
+const Company = require('../models/company.model');  
 
 const deleteOldProfilePictures = async (userId, currentImageKey) => {
   try {
@@ -74,7 +74,7 @@ const uploadToS3 = async (req, res, next) => {
     const imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.amazonaws.com/${fileName}`;
 
    
-    const user = await User.findById(userId);
+    const user = await Company.findById(userId);
     if (!user) {
       return res.status(404).send('Usuario no encontrado');
     }
