@@ -2,7 +2,7 @@ const express = require('express');
 const { swaggerUi, specs } = require('./swaggerConfig');
 
 //para aws
-const uploadRoute = require('./routes/upload.routes'); // Ruta de carga
+const uploadRouteUPP = require('./routes/uploadUPP.routes'); // Ruta de carga
 const uploadRouteCPP = require('./routes/uploadCPP.routes'); //CPP significa CompanyProfilePicture
 
 const companyRoutes = require('./routes/company.routes');
@@ -55,14 +55,16 @@ app.use('/api/promos', promoRoutes);
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 //para aws
-app.use('/api', uploadRoute);
+app.use('/api', uploadRouteUPP); //UPP significa UserProfilePicture
 app.use('/api', uploadRouteCPP); //CPP significa CompanyProfilePicture
 
 app.use('/api/auth', authRoutes)
 
 app.get("/", (request, response) => {
     response.json({
-        message: "Api accessGo v1.2",
+
+        message: "Api accessGo v1.4",
+
         success: "True"
     })
 })
