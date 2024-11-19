@@ -9,7 +9,11 @@ router.post('/hotels', async (req, res) => {
   try {
     const hotelAccessibility = new HotelAccessibility(req.body);
     await hotelAccessibility.save();
-    res.status(201).json(hotelAccessibility);
+    res.status(201).json({
+      success: true,
+      message: 'Cuestionario de accesibilidad para hotel creado exitosamente',
+      data: hotelAccessibility
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear cuestionario de accesibilidad para hotel', error });
   }
@@ -20,7 +24,11 @@ router.post('/restaurants', async (req, res) => {
   try {
     const restaurantAccessibility = new RestaurantAccessibility(req.body);
     await restaurantAccessibility.save();
-    res.status(201).json(restaurantAccessibility);
+    res.status(201).json({
+      success: true,
+      message: 'Cuestionario de accesibilidad para hotel creado exitosamente',
+      data: hotelAccessibility
+    });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear cuestionario de accesibilidad para restaurante', error });
   }
