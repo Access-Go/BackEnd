@@ -27,7 +27,7 @@ router.post('/restaurants', async (req, res) => {
     res.status(201).json({
       success: true,
       message: 'Cuestionario de accesibilidad para hotel creado exitosamente',
-      data: hotelAccessibility
+      data: restaurantAccessibility
     });
   } catch (error) {
     res.status(500).json({ message: 'Error al crear cuestionario de accesibilidad para restaurante', error });
