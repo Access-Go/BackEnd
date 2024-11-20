@@ -25,7 +25,7 @@ const DisabilitySchema = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['Motriz', 'Visual', 'Auditiva', 'Intelectual', 'Neurodivergentes'],
+    enum: ['Motriz', 'Visual', 'Auditiva', 'Intelectual', 'Neurodivergente'],
   },
   sections: [SectionSchema],
 });
