@@ -23,7 +23,7 @@ const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME } = process.env;
 
 // const URI = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`;
 
-const URI = `mongodb+srv://AccesGo:Accesibilidad.1@accessgo.gxajq.mongodb.net/TESTACCESGO`;
+const URI = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}`;
 
 /**
  * --------------------------------------

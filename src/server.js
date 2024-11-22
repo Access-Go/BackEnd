@@ -12,6 +12,9 @@ const promoRoutes = require('./routes/promo.routes');
 const rankingRoutes = require('./routes/ranking.routes');
 const path = require('path');
 const  accessibilityRoutes = require("./routes/accesibility.routes")
+const visitasRoutes = require('./routes/visits.routes');
+
+
 
 require('dotenv').config();
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
@@ -52,6 +55,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes)
 
+app.use('/api/visitas', visitasRoutes);
 
 app.get("/", (request, response) => {
     response.json({
