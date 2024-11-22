@@ -19,6 +19,9 @@ const rankingRoutes = require('./routes/ranking.routes');
 const volunteerRoutes = require('./routes/volunteer.routes');
 const path = require('path');
 const  accessibilityRoutes = require("./routes/accesibility.routes")
+const visitasRoutes = require('./routes/visits.routes');
+
+
 
 require('dotenv').config();
 console.log("JWT_SECRET:", process.env.JWT_SECRET);
@@ -65,6 +68,7 @@ app.use('/api', getImagesRoute) // recupera imagenes de la carpeta del bucket pa
 
 app.use('/api/auth', authRoutes)
 
+app.use('/api/visitas', visitasRoutes);
 
 app.get("/", (request, response) => {
     response.json({
