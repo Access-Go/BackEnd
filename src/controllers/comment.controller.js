@@ -32,15 +32,26 @@ const createComment = async (req, res) => {
  * @param {Object} req - Objeto de solicitud
  * @param {Object} res - Objeto de respuesta
  */
+
 const getCommentsByBusiness = async (req, res) => {
     try {
-        const { businessId } = req.params;
-        const comments = await Comment.find({ businessId }).populate('userId', 'firstName lastName');
-        res.status(200).json({ success: true, data: comments });
+      const { companyId } = req.params;
+  
+      const comments = await Comment.find({ businessId: companyId })
+        .populate('rankingId', 'stars') // Obtén solo las estrellas del ranking
+        .populate('userId', 'name'); // Opcional: muestra el nombre del usuario
+  
+      if (!comments || comments.length === 0) {
+        return res.status(404).json({ message: 'No se encontraron comentarios para esta compañía.' });
+      }
+  
+      res.status(200).json({ success: true, data: comments });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+      console.error('Error al obtener comentarios:', error);
+      res.status(500).json({ message: 'Error al obtener los comentarios.' });
     }
-};
+  };
+  
 
 /**
  * Obtiene los comentarios por usuario
