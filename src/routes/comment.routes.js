@@ -22,18 +22,49 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               text:
+ *               content:
  *                 type: string
- *                 description: The comment text
+ *                 description: The comment content
  *               userId:
  *                 type: string
  *                 description: The ID of the user making the comment
- *               companyId:
+ *               businessId:
  *                 type: string
- *                 description: The ID of the company being commented on
+ *                 description: The ID of the business being commented on
+ *               rankingId:
+ *                 type: string
+ *                 description: The ID of the ranking associated with the comment
  *     responses:
  *       201:
  *         description: Comment created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     businessId:
+ *                       type: string
+ *                     userId:
+ *                       type: string
+ *                     content:
+ *                       type: string
+ *                     rankingId:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                         stars :
+ *                           type: number
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
  *       400:
  *         description: Bad request
  */
@@ -41,20 +72,20 @@ router.post('/', commentController.createComment);
 
 /**
  * @swagger
- * /api/comments/company/{companyId}:
+ * /api/comments/company/{businessId}:
  *   get:
- *     summary: Get all comments for a specific company
+ *     summary: Get all comments for a specific business
  *     tags: [Comments]
  *     parameters:
  *       - in: path
- *         name: companyId
+ *         name: businessId
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the company
+ *         description: The ID of the business
  *     responses:
  *       200:
- *         description: A list of comments
+ *         description: A list of comments for the business
  *         content:
  *           application/json:
  *             schema:
@@ -62,16 +93,28 @@ router.post('/', commentController.createComment);
  *               items:
  *                 type: object
  *                 properties:
- *                   id:
+ *                   _id:
  *                     type: string
- *                   text:
+ *                   content:
  *                     type: string
  *                   userId:
  *                     type: string
- *                   companyId:
+ *                   businessId:
  *                     type: string
+ *                   rankingId:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       stars:
+ *                         type: number
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
  *       404:
- *         description: Company not found
+ *         description: Business not found
+ *       500:
+ *         description: Internal server error
  */
 
 router.get('/company/:businessId', commentController.getCommentsByBusiness);
@@ -91,7 +134,7 @@ router.get('/company/:businessId', commentController.getCommentsByBusiness);
  *         description: The ID of the user
  *     responses:
  *       200:
- *         description: A list of comments
+ *         description: A list of comments by the user
  *         content:
  *           application/json:
  *             schema:
@@ -99,14 +142,19 @@ router.get('/company/:businessId', commentController.getCommentsByBusiness);
  *               items:
  *                 type: object
  *                 properties:
- *                   id:
+ *                   _id:
  *                     type: string
- *                   text:
+ *                   content:
  *                     type: string
  *                   userId:
  *                     type: string
- *                   companyId:
+ *                   businessId:
  *                     type: string
+ *                   rankingId:
+ *                     type: string
+ *                   createdAt:
+ *                     type: string
+ *                     format: date-time
  *       404:
  *         description: User not found
  */
