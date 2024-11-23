@@ -33,6 +33,11 @@ const commentSchema = new mongoose.Schema({
         required: true,
         maxLength: 500
     },
+    rankingId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Ranking',
+        required: false
+    },
     createdAt: {
         type: Date,
         default: Date.now

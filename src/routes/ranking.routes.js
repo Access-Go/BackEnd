@@ -74,4 +74,28 @@ router.get('/business/:businessId', rankingController.getRankingsByBusiness);
  */
 router.get('/business/:businessId/average', rankingController.getAverageRankingByBusiness);
 
+/**
+ * @swagger
+ * /api/rankings/{id}:
+ *   get:
+ *     summary: Obtener un ranking por ID
+ *     tags: [Rankings]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del ranking a buscar
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Ranking obtenido con éxito
+ *       404:
+ *         description: Ranking no encontrado
+ *       500:
+ *         description: Error del servidor
+ */
+router.get('/:id', rankingController.getRankingById);
+
+
 module.exports = router;

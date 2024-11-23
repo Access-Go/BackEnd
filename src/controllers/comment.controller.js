@@ -12,13 +12,20 @@ const Comment = require('../models/comment.model');
  */
 const createComment = async (req, res) => {
     try {
-        const { businessId, userId, content } = req.body;
-        const newComment = await Comment.create({ businessId, userId, content });
-        res.status(201).json({ success: true, data: newComment });
+        const { businessId, userId, content, rankingId } = req.body;
+
+        // Crear el comentario
+        const newComment = await Comment.create({ businessId, userId, content, rankingId });
+
+        // Popular los datos del ranking (opcional si deseas más detalles sobre el ranking)
+        const populatedComment = await Comment.findById(newComment._id).populate('rankingId', 'stars'); // 'score' es un ejemplo del campo en Ranking
+
+        res.status(201).json({ success: true, data: populatedComment });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
 
 /**
  * Obtiene los comentarios por negocio
@@ -43,12 +50,16 @@ const getCommentsByBusiness = async (req, res) => {
 const getCommentsByUser = async (req, res) => {
     try {
         const { userId } = req.params;
-        const comments = await Comment.find({ userId }).populate('businessId', 'companyName');
+        const comments = await Comment.find({ userId })
+            .populate('businessId', 'companyName') 
+            .populate('rankingId', 'stars'); 
+        
         res.status(200).json({ success: true, data: comments });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
 
 /**
  * Elimina un comentario por su ID
