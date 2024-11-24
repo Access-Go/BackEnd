@@ -27,6 +27,7 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: 'Error al registrar la visita' });
     }
 });
+
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -37,38 +38,30 @@ router.get('/:id', async (req, res) => {
 
         const now = new Date();
         now.setUTCHours(23, 59, 59, 999); 
-        
-        startDate = new Date();
-        startDate.setUTCDate(startDate.getUTCDate() - 7);
-        startDate.setUTCHours(0, 0, 0, 0); 
-        
-        const testData = await Visit.find({
-            page: id,
-            "visitDates.date": { $gte: new Date("2024-11-14T00:00:00.000Z") }
-        });
-        console.log("Datos sin agrupar:", testData);
-        const allVisits = await Visit.find({ page: id });
-        console.log("Registros de visitas para esta página:", allVisits);
+
+        let startDate;
+
+        // Cálculo de la fecha de inicio según el rango
         switch (rango) {
+            case "día":
+                startDate = new Date(now);
+                startDate.setUTCHours(0, 0, 0, 0);
+                break;
+
             case "semana":
                 startDate = new Date(now);
-                startDate.setDate(now.getDate() - 7); 
-                startDate.setHours(0, 0, 0, 0);
+                startDate.setUTCDate(now.getUTCDate() - 7);
+                startDate.setUTCHours(0, 0, 0, 0);
                 break;
 
             case "mes":
                 startDate = new Date(now);
-                startDate.setDate(now.getDate() - 30); 
-                startDate.setHours(0, 0, 0, 0);
+                startDate.setUTCDate(now.getUTCDate() - 30);
+                startDate.setUTCHours(0, 0, 0, 0);
                 break;
 
             case "año":
-                startDate = new Date(now.getFullYear(), 0, 1); 
-                break;
-
-            case "día":
-                startDate = new Date(now);
-                startDate.setHours(0, 0, 0, 0); 
+                startDate = new Date(now.getUTCFullYear(), 0, 1); // Inicio del año
                 break;
 
             default:
@@ -76,11 +69,21 @@ router.get('/:id', async (req, res) => {
         }
 
         console.log("Fecha de inicio calculada:", startDate);
+
+        // Pipeline de agregación
         const visits = await Visit.aggregate([
             { 
                 $match: { 
                     page: id,
-                    visitedAt: { $gte: startDate } 
+                    "visitDates.date": { $gte: startDate, $lte: now } // Filtra fechas dentro del rango
+                }
+            },
+            { 
+                $unwind: "$visitDates" // Descompone visitDates en documentos individuales
+            },
+            {
+                $match: {
+                    "visitDates.date": { $gte: startDate, $lte: now } // Filtrar nuevamente las fechas descompuestas
                 }
             },
             {
@@ -88,17 +91,18 @@ router.get('/:id', async (req, res) => {
                     _id: {
                         $dateToString: {
                             format: rango === "año" ? "%Y" : 
-                                   rango === "mes" ? "%Y-%m" : "%Y-%m-%d", 
-                            date: "$visitedAt"
+                                   rango === "mes" ? "%Y-%m" : 
+                                   rango === "semana" ? "%Y-%m-%d" : "%Y-%m-%d", // Formato por rango
+                            date: "$visitDates.date"
                         }
                     },
-                    totalVisitas: { $sum: 1 }
+                    totalVisitas: { $sum: 1 } // Suma las visitas
                 }
             },
-            { $sort: { _id: 1 } }
+            { $sort: { _id: 1 } } // Ordenar por fecha
         ]);
-        
-     
+
+        // Mapeo del resultado
         const visitsData = visits.map(visit => ({
             date: visit._id, 
             totalVisits: visit.totalVisitas 
@@ -109,6 +113,7 @@ router.get('/:id', async (req, res) => {
             success: true,
             data: visitsData
         });
+
     } catch (error) {
         console.error('Error al obtener las visitas:', error);
         res.status(500).json({ error: 'Error al obtener las visitas' });
