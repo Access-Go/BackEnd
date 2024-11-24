@@ -21,11 +21,11 @@ const promoSchema = new mongoose.Schema({
     businessId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Company',
-        required: true
+        required: false
     },
     name: {
         type: String,
-        required: true,
+        required: false,
         maxLength: 100
     },
     description: {
@@ -34,24 +34,33 @@ const promoSchema = new mongoose.Schema({
     },
     startDate: {
         type: Date,
-        required: true
+        required: false
     },
     endDate: {
         type: Date,
-        required: true
+        required: false
     },
     openingTime: {
         type: Number,
-        required: true
+        required: false
     },
     closingTime: {
         type: Number,
-        required: true
+        required: false
     },
     createdAt: {
         type: Date,
         default: Date.now
     }
 });
+
+promoSchema.pre('save', function (next) {
+    const duration = (this.endDate - this.startDate) / (1000 * 60 * 60 * 24); // Convertir a días
+    if (duration > 30) {
+        return next(new Error('La duración de la promoción no puede exceder los 30 días.'));
+    }
+    next();
+});
+
 
 module.exports = mongoose.model(modelName, promoSchema);
