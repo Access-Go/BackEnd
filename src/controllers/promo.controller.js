@@ -33,17 +33,11 @@ const Promo = require('../models/promo.model')
 
 const getPromosByBusiness = async (req, res) => {
     try {
-        // Log para inspeccionar los parámetros recibidos
-        console.log("Parámetros recibidos:", req.params);
 
         const promos = await promoUsecase.getByBusiness(req.params.businessId);
         
-        // Log para inspeccionar el resultado de la consulta
-        console.log("Promociones obtenidas:", promos);
-
         res.status(200).json({ success: true, data: promos });
     } catch (error) {
-        // Log del error en caso de fallo
         console.error("Error al obtener promociones:", error);
         res.status(500).json({ success: false, error: error.message });
     }
