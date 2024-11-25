@@ -72,18 +72,19 @@ const companySchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    required: false,
     maxLength: 500
   },
   address: {
     type: String,
-    required: false // Dirección de la compañía
+    required: false 
   },
   latitude: {
-    type: Number, // Asegúrate de que sea de tipo número
+    type: Number,
     required: false
   },
   longitude: {
-    type: Number, // Asegúrate de que sea de tipo número
+    type: Number, 
     required: false
   },
   phone: {
@@ -112,10 +113,12 @@ const companySchema = new mongoose.Schema({
       type: Number,
       default: 1
     },
-    hasStatistics: {
-      type: Boolean,
-      default: false
-    }
+    promoYevetos:
+    [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Promo',
+      required: false
+   } ]
   },
   averageRating: {
     type: Number,

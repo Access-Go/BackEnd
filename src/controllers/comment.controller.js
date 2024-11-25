@@ -35,12 +35,15 @@ const createComment = async (req, res) => {
 
 const getCommentsByBusiness = async (req, res) => {
     try {
-      const { companyId } = req.params;
+      const { businessId } = req.params;
   
-      const comments = await Comment.find({ businessId: companyId })
-        .populate('rankingId', 'stars') // Obtén solo las estrellas del ranking
-        .populate('userId', 'name'); // Opcional: muestra el nombre del usuario
-  
+     
+
+const comments = await Comment.find({ businessId })
+  .populate('rankingId', 'stars')
+  .populate('userId', 'name');
+
+
       if (!comments || comments.length === 0) {
         return res.status(404).json({ message: 'No se encontraron comentarios para esta compañía.' });
       }
