@@ -44,9 +44,9 @@ const comments = await Comment.find({ businessId })
   .populate('userId', 'name');
 
 
-      if (!comments || comments.length === 0) {
+      /* if (!comments || comments.length === 0) {
         return res.status(404).json({ message: 'No se encontraron comentarios para esta compañía.' });
-      }
+      } */
   
       res.status(200).json({ success: true, data: comments });
     } catch (error) {
