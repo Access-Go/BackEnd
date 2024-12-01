@@ -21,19 +21,23 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - content
+ *               - userId
+ *               - businessId
  *             properties:
  *               content:
  *                 type: string
- *                 description: The comment content
+ *                 description: The content of the comment
  *               userId:
  *                 type: string
- *                 description: The ID of the user making the comment
+ *                 description: ID of the user making the comment
  *               businessId:
  *                 type: string
- *                 description: The ID of the business being commented on
+ *                 description: ID of the business being commented on
  *               rankingId:
  *                 type: string
- *                 description: The ID of the ranking associated with the comment
+ *                 description: ID of the ranking associated with the comment (optional)
  *     responses:
  *       201:
  *         description: Comment created successfully
@@ -45,28 +49,9 @@ const router = express.Router();
  *                 success:
  *                   type: boolean
  *                 data:
- *                   type: object
- *                   properties:
- *                     _id:
- *                       type: string
- *                     businessId:
- *                       type: string
- *                     userId:
- *                       type: string
- *                     content:
- *                       type: string
- *                     rankingId:
- *                       type: object
- *                       properties:
- *                         _id:
- *                           type: string
- *                         stars :
- *                           type: number
- *                     createdAt:
- *                       type: string
- *                       format: date-time
+ *                   $ref: '#/components/schemas/Comment'
  *       400:
- *         description: Bad request
+ *         description: Invalid request data
  */
 router.post('/', commentController.createComment);
 
@@ -82,41 +67,21 @@ router.post('/', commentController.createComment);
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the business
+ *         description: ID of the business
  *     responses:
  *       200:
- *         description: A list of comments for the business
+ *         description: A list of comments for the specified business
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   content:
- *                     type: string
- *                   userId:
- *                     type: string
- *                   businessId:
- *                     type: string
- *                   rankingId:
- *                     type: object
- *                     properties:
- *                       _id:
- *                         type: string
- *                       stars:
- *                         type: number
- *                     createdAt:
- *                       type: string
- *                       format: date-time
+ *                 $ref: '#/components/schemas/Comment'
  *       404:
- *         description: Business not found
+ *         description: Business not found or no comments available
  *       500:
  *         description: Internal server error
  */
-
 router.get('/company/:businessId', commentController.getCommentsByBusiness);
 
 /**
@@ -131,32 +96,20 @@ router.get('/company/:businessId', commentController.getCommentsByBusiness);
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the user
+ *         description: ID of the user
  *     responses:
  *       200:
- *         description: A list of comments by the user
+ *         description: A list of comments by the specified user
  *         content:
  *           application/json:
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   _id:
- *                     type: string
- *                   content:
- *                     type: string
- *                   userId:
- *                     type: string
- *                   businessId:
- *                     type: string
- *                   rankingId:
- *                     type: string
- *                   createdAt:
- *                     type: string
- *                     format: date-time
+ *                 $ref: '#/components/schemas/Comment'
  *       404:
- *         description: User not found
+ *         description: User not found or no comments available
+ *       500:
+ *         description: Internal server error
  */
 router.get('/user/:userId', commentController.getCommentsByUser);
 
@@ -172,13 +125,42 @@ router.get('/user/:userId', commentController.getCommentsByUser);
  *         schema:
  *           type: string
  *         required: true
- *         description: The ID of the comment
+ *         description: ID of the comment to delete
  *     responses:
  *       200:
  *         description: Comment deleted successfully
  *       404:
  *         description: Comment not found
+ *       500:
+ *         description: Internal server error
  */
 router.delete('/:id', commentController.deleteComment);
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Comment:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *         content:
+ *           type: string
+ *         userId:
+ *           type: string
+ *         businessId:
+ *           type: string
+ *         rankingId:
+ *           type: object
+ *           properties:
+ *             _id:
+ *               type: string
+ *             stars:
+ *               type: number
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ */
 
 module.exports = router;
