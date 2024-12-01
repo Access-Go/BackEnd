@@ -39,10 +39,10 @@ const getCommentsByBusiness = async (req, res) => {
   
      
 
-const comments = await Comment.find({ businessId })
-  .populate('rankingId', 'stars')
-  .populate('userId', 'name');
-
+      const comments = await Comment.find({ businessId })
+      .populate('rankingId', 'stars')
+      .populate('userId', 'firstName profilePicture');
+    
 
       if (!comments || comments.length === 0) {
         return res.status(404).json({ message: 'No se encontraron comentarios para esta compañía.' });
