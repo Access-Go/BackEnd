@@ -99,7 +99,7 @@ const companySchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: ['hotel', 'restaurante'],
+    enum: ['HotelAccessibility', 'RestaurantAccessibility'], // Cambiar a los nombres de los modelos
     required: false
   },
   cuenta: {
@@ -124,9 +124,10 @@ const companySchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  checkpoints: {
+  accessibility: {
     type: mongoose.Schema.Types.ObjectId,
-    refPath: 'tipo'
+    refPath: 'tipo',
+    required: false,
   },
   verified: {
     type: Boolean,
