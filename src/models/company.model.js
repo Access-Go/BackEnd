@@ -77,14 +77,14 @@ const companySchema = new mongoose.Schema({
   },
   address: {
     type: String,
-    required: false 
+    required: false
   },
   latitude: {
     type: Number,
     required: false
   },
   longitude: {
-    type: Number, 
+    type: Number,
     required: false
   },
   phone: {
@@ -99,7 +99,7 @@ const companySchema = new mongoose.Schema({
   },
   tipo: {
     type: String,
-    enum: ['HotelAccessibility', 'RestaurantAccessibility'], // Cambiar a los nombres de los modelos
+    enum: ['HotelAccessibility', 'RestaurantAccessibility'],
     required: false
   },
   cuenta: {
@@ -114,11 +114,11 @@ const companySchema = new mongoose.Schema({
       default: 1
     },
     promoYevetos:
-    [{
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Promo',
-      required: false
-   } ]
+      [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Promo',
+        required: false
+      }]
   },
   averageRating: {
     type: Number,
@@ -128,6 +128,11 @@ const companySchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     refPath: 'tipo',
     required: false,
+  },
+  redesSociales: {
+    facebook: { type: String, required: false },
+    twitter: { type: String, required: false },
+    instagram: { type: String, required: false }
   },
   verified: {
     type: Boolean,
