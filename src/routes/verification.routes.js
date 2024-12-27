@@ -14,19 +14,18 @@ router.post('/send-code', async (req, res) => {
             user = await Company.findOne({ email });
         }
         if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
+            return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
         }
-        if (user.verified) {
-            return res.status(400).json({ message: 'La cuenta ya está verificada.' });
-        }
+        
         await sendVerificationCode(user._id, email);
-
-        return res.status(200).json({ message: 'Código de verificación enviado al correo.' });
+        console.log('Código de verificación enviado exitosamente para email:', email);
+        return res.status(200).json({ success: true, message: 'Código de verificación enviado al correo.' });
     } catch (error) {
-        console.error('Error al enviar el código de verificación:', error);
-        return res.status(500).json({ message: 'Error al enviar el código de verificación.' });
+        console.error('Error al enviar el código de verificación desde back:', error);
+        return res.status(500).json({ success: false, message: 'Error al enviar el código de verificación.' });
     }
 });
+
 
 
 router.post('/verify-code', async (req, res) => {

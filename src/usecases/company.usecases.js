@@ -104,9 +104,17 @@ const removeCompany = async (id) => {
     return { message: 'Company successfully deleted' };
 };
 
+const getCompanyByEmail = async(email) =>{
+    const companyFound = Company.findOne({email}).select('-password');
+    if(!companyFound){
+        throw new Error('No se encontró una compañía con este correo electrónico');
+    }
+    return companyFound;
+}
+
 /**
  * -----------------------------------------
  * Exportamos las funciones
  * -----------------------------------------
  */
-module.exports = { create, getById, getAll, update, removeCompany, updateCompanyRating };
+module.exports = { create, getById, getAll, update, removeCompany, updateCompanyRating, getCompanyByEmail };

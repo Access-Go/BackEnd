@@ -167,6 +167,34 @@ const getCompanyById = async (req, res) => {
     }
 };
 
+const getCompanyByEmailHandler = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        // Validar que el correo esté en el cuerpo de la solicitud
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Se requiere un correo electrónico válido',
+            });
+        }
+
+        // Buscar el usuario por su correo
+        const company = await companyUseCase.getCompanyByEmail(email);
+
+        return res.status(200).json({
+            success: true,
+            data: { company },
+        });
+    } catch (error) {
+        const statusCode = error.message.includes('No se encontró') ? 404 : 500;
+        return res.status(statusCode).json({
+            success: false,
+            error: error.message,
+        });
+    }
+};
+
 
 /**
  * -----------------------------------------------------------------
@@ -174,4 +202,4 @@ const getCompanyById = async (req, res) => {
  * -----------------------------------------------------------------
  */
 
-module.exports = { createCompany, deleteCompany, companyAll, updateCompany, getCompanyById, updateCompanyRating };
+module.exports = { createCompany, deleteCompany, companyAll, updateCompany, getCompanyById, updateCompanyRating, getCompanyByEmailHandler };

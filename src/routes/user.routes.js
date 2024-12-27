@@ -242,6 +242,39 @@ router.delete('/:id', userController.deleteUser);
 router.get('/:userId/companies', userController.getUserCompanies);
 
 /**
+ * @swagger
+ * /users/email:
+ *   post:
+ *     summary: Obtener un usuario por correo electrónico
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Correo electrónico del usuario
+ *     responses:
+ *       200:
+ *         description: Información del usuario encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Usuario no encontrado
+ *       400:
+ *         description: Error en la solicitud (correo faltante o inválido)
+ */
+router.post('/email', userController.getUserByEmailHandler);
+
+
+
+/**
  * --------------------------------------
  * Exportamos el router
  * --------------------------------------

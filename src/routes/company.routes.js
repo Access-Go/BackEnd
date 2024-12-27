@@ -201,6 +201,38 @@ router.put('/:id', companyController.updateCompany);
 router.get('/:id', companyController.getCompanyById);
 
 /**
+ * @swagger
+ * /companies/email:
+ *   post:
+ *     summary: Obtener una compañía por correo electrónico
+ *     tags: [Companies]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Correo electrónico de la compañía
+ *     responses:
+ *       200:
+ *         description: Información de la compañía encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Company'
+ *       404:
+ *         description: Compañía no encontrada
+ *       400:
+ *         description: Error en la solicitud (correo faltante o inválido)
+ */
+router.post('/email', companyController.getCompanyByEmailHandler);
+
+
+/**
  * --------------------------------------
  * Exportamos el router
  * --------------------------------------

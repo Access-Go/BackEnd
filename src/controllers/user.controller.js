@@ -192,6 +192,42 @@ const getUserCompanies = async (req, res) => {
     }
 };
 
+/**
+ * -----------------------------------------------------------------
+ * Controlador para buscar usuario por correo electrónico
+ * -----------------------------------------------------------------
+ * @param {Object} request - Objeto de solicitud de Express
+ * @param {Object} response - Objeto de respuesta de Express
+ */
+
+const getUserByEmailHandler = async (req, res) => {
+    try {
+        const { email } = req.body;
+
+        // Validar que el correo esté en el cuerpo de la solicitud
+        if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Se requiere un correo electrónico válido',
+            });
+        }
+
+        // Buscar el usuario por su correo
+        const user = await userUseCase.getUserByEmail(email);
+
+        return res.status(200).json({
+            success: true,
+            data: { user },
+        });
+    } catch (error) {
+        const statusCode = error.message.includes('No se encontró') ? 404 : 500;
+        return res.status(statusCode).json({
+            success: false,
+            error: error.message,
+        });
+    }
+};
+
 
 
 /**
@@ -199,4 +235,4 @@ const getUserCompanies = async (req, res) => {
  * Exportamos los controladores
  * -----------------------------------------------------------------
  */
-module.exports = { createUser, userById, getAllUsers, updateUser, deleteUser, getUserCompanies };
+module.exports = { createUser, userById, getAllUsers, updateUser, deleteUser, getUserCompanies, getUserByEmailHandler};

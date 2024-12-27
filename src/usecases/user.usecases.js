@@ -113,10 +113,25 @@ const deleteUser = async (id) => {
     await user.deleteOne({ _id: id });
     return { message: 'Usuario eliminado correctamente' };
 };
+/**
+ * -------------------------------------------------
+ * Función para obtener un usuario por su correo
+ * -------------------------------------------------
+ * @param {string} email - Correo del usuario a buscar
+ * @returns - Usuario encontrado (sin la contraseña)
+ */
+
+const getUserByEmail = async (email) => {
+    const userFound = await user.findOne({ email }).select('-password');
+    if (!userFound) {
+        throw new Error('No se encontró un usuario con este correo electrónico');
+    }
+    return userFound;
+};
 
 /**
  * -----------------------------------------
  * Exportamos las funciones
  * -----------------------------------------
  */
-module.exports = { create, update, getById, getAll, deleteUser };
+module.exports = { create, update, getById, getAll, deleteUser, getUserByEmail };
