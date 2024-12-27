@@ -6,11 +6,13 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 
+
 dotenv.config();
 
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+
 
 const s3 = new S3Client({
   region: process.env.AWS_S3_REGION,
@@ -43,5 +45,8 @@ router.post('/uploadacc', upload.single('image'), async (req, res) => {
     res.status(500).json({ error: 'Error uploading file' });
   }
 });
+
+
+
 
 module.exports = router;

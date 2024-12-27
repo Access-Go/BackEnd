@@ -136,6 +136,10 @@ router.get('/user/:userId', commentController.getCommentsByUser);
  */
 router.delete('/:id', commentController.deleteComment);
 
+router.post('/like/:id', commentController.addLike);
+router.post('/dislike/:id', commentController.addDislike);
+
+
 /**
  * @swagger
  * components:
