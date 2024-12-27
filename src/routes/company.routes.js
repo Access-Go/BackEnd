@@ -234,6 +234,48 @@ router.post('/email', companyController.getCompanyByEmailHandler);
 
 /**
  * --------------------------------------
+ * Ruta para cambiar la contraseña de una empresa por ID
+ * --------------------------------------
+ */
+/**
+ * @swagger
+ * /companies/{id}/change-password:
+ *   post:
+ *     summary: Cambiar la contraseña de una empresa por ID
+ *     tags: [Companies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la empresa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 description: Nueva contraseña de la empresa
+ *                 minLength: 6
+ *     responses:
+ *       200:
+ *         description: Contraseña actualizada exitosamente
+ *       400:
+ *         description: Error en la solicitud o contraseña inválida
+ *       404:
+ *         description: Empresa no encontrada
+ *       500:
+ *         description: Error en el servidor
+ */
+router.post('/:id/change-password', companyController.changePassword);
+
+
+/**
+ * --------------------------------------
  * Exportamos el router
  * --------------------------------------
  */

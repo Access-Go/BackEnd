@@ -6,6 +6,8 @@
 const companyUseCase = require('../usecases/company.usecases');
 const RegisteredEmail = require('../models/registeredEmail.model.js');
 
+const bcrypt = require('bcrypt');
+
 /**
  * -----------------------------------------------------------------
  * Controlador para crear registros
@@ -197,9 +199,43 @@ const getCompanyByEmailHandler = async (req, res) => {
 
 
 /**
+ * Cambiar la contraseña del usuario
+ * @param {String} id - ID del usuario
+ * @param {String} newPassword - Nueva contraseña proporcionada por el usuario
+ */
+const changePassword = async (req, res) => {
+    const { id } = req.params; // ID del usuario
+    const { newPassword } = req.body; // Nueva contraseña
+
+    try {
+        // Buscar al usuario por ID
+        const user = await companyUseCase.getById(id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+        }
+
+        // Validar la nueva contraseña (ejemplo: mínimo 6 caracteres)
+        if (!newPassword || newPassword.length < 6) {
+            return res.status(400).json({ success: false, message: 'La nueva contraseña debe tener al menos 6 caracteres' });
+        }
+
+        // Hash de la nueva contraseña
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        // Actualizar la contraseña
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).json({ success: true, message: 'Contraseña actualizada correctamente' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+/**
  * -----------------------------------------------------------------
  * Exportamos los controladores
  * -----------------------------------------------------------------
  */
 
-module.exports = { createCompany, deleteCompany, companyAll, updateCompany, getCompanyById, updateCompanyRating, getCompanyByEmailHandler };
+module.exports = { createCompany, deleteCompany, companyAll, updateCompany, getCompanyById, updateCompanyRating, getCompanyByEmailHandler, changePassword };

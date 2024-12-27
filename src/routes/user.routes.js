@@ -272,6 +272,46 @@ router.get('/:userId/companies', userController.getUserCompanies);
  */
 router.post('/email', userController.getUserByEmailHandler);
 
+/**
+ * --------------------------------------
+ * Ruta para cambiar la contraseña de un usuario por ID
+ * --------------------------------------
+ */
+/**
+ * @swagger
+ * /users/{id}/change-password:
+ *   post:
+ *     summary: Cambiar la contraseña de un usuario por ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID del usuario
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 description: Nueva contraseña del usuario
+ *                 minLength: 6
+ *     responses:
+ *       200:
+ *         description: Contraseña actualizada exitosamente
+ *       400:
+ *         description: Error en la solicitud o contraseña inválida
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error en el servidor
+ */
+router.post('/:id/change-password', userController.changePassword);
 
 
 /**
