@@ -201,6 +201,80 @@ router.put('/:id', companyController.updateCompany);
 router.get('/:id', companyController.getCompanyById);
 
 /**
+ * @swagger
+ * /companies/email:
+ *   post:
+ *     summary: Obtener una compañía por correo electrónico
+ *     tags: [Companies]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Correo electrónico de la compañía
+ *     responses:
+ *       200:
+ *         description: Información de la compañía encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Company'
+ *       404:
+ *         description: Compañía no encontrada
+ *       400:
+ *         description: Error en la solicitud (correo faltante o inválido)
+ */
+router.post('/email', companyController.getCompanyByEmailHandler);
+
+
+/**
+ * --------------------------------------
+ * Ruta para cambiar la contraseña de una empresa por ID
+ * --------------------------------------
+ */
+/**
+ * @swagger
+ * /companies/{id}/change-password:
+ *   post:
+ *     summary: Cambiar la contraseña de una empresa por ID
+ *     tags: [Companies]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de la empresa
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 description: Nueva contraseña de la empresa
+ *                 minLength: 6
+ *     responses:
+ *       200:
+ *         description: Contraseña actualizada exitosamente
+ *       400:
+ *         description: Error en la solicitud o contraseña inválida
+ *       404:
+ *         description: Empresa no encontrada
+ *       500:
+ *         description: Error en el servidor
+ */
+router.post('/:id/change-password', companyController.changePassword);
+
+
+/**
  * --------------------------------------
  * Exportamos el router
  * --------------------------------------
