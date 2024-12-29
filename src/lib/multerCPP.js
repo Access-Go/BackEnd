@@ -53,7 +53,7 @@ const uploadToS3 = async (req, res, next) => {
   }
 
   const userId = req.body.userId;  
-  const fileName = `${userId}/${Date.now()}.jpg`;  
+  const fileName = `profpic/${userId}/${Date.now()}.jpg`;  
   const params = {
     Bucket: process.env.AWS_S3_BUCKET_NAME,  
     Key: fileName,  

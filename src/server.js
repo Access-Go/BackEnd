@@ -6,6 +6,7 @@ const uploadRouteUPP = require('./routes/uploadUPP.routes'); // Ruta de carga
 const uploadRouteCPP = require('./routes/uploadCPP.routes'); //CPP significa CompanyProfilePicture
 const uploadRouteACC = require('./routes/uploadACC.routes'); // para subir fotos de las companies
 const getImagesRoute = require('./routes/getImages.routes'); //carrousel de imagenes de la companie
+const getProfilePictureRoute = require('./routes/getProfilePicture.routes'); 
 const deleteImagesACCRoute = require('./routes/deleteACC.routes')
 
 const companyRoutes = require('./routes/company.routes');
@@ -66,6 +67,7 @@ app.use('/api', uploadRouteUPP); //UPP significa UserProfilePicture
 app.use('/api', uploadRouteCPP); //CPP significa CompanyProfilePicture
 app.use('/api', uploadRouteACC); // AC es para subida de las imagenes de acccesibilidad de las compañias
 app.use('/api', getImagesRoute) // recupera imagenes de la carpeta del bucket para las imagenes de la companie
+app.use('/api', getProfilePictureRoute)
 app.use('/api', deleteImagesACCRoute) //borra imagenes del carrousel 
 
 app.use('/api/auth', authRoutes)
