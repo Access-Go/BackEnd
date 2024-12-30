@@ -242,6 +242,79 @@ router.delete('/:id', userController.deleteUser);
 router.get('/:userId/companies', userController.getUserCompanies);
 
 /**
+ * @swagger
+ * /users/email:
+ *   post:
+ *     summary: Obtener un usuario por correo electrónico
+ *     tags: [Users]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Correo electrónico del usuario
+ *     responses:
+ *       200:
+ *         description: Información del usuario encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *       404:
+ *         description: Usuario no encontrado
+ *       400:
+ *         description: Error en la solicitud (correo faltante o inválido)
+ */
+router.post('/email', userController.getUserByEmailHandler);
+
+/**
+ * --------------------------------------
+ * Ruta para cambiar la contraseña de un usuario por ID
+ * --------------------------------------
+ */
+/**
+ * @swagger
+ * /users/{id}/change-password:
+ *   post:
+ *     summary: Cambiar la contraseña de un usuario por ID
+ *     tags: [Users]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID del usuario
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPassword:
+ *                 type: string
+ *                 description: Nueva contraseña del usuario
+ *                 minLength: 6
+ *     responses:
+ *       200:
+ *         description: Contraseña actualizada exitosamente
+ *       400:
+ *         description: Error en la solicitud o contraseña inválida
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error en el servidor
+ */
+router.post('/:id/change-password', userController.changePassword);
+
+
+/**
  * --------------------------------------
  * Exportamos el router
  * --------------------------------------
