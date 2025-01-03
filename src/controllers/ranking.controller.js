@@ -72,3 +72,24 @@ async function updateAverageRating(businessId) {
   const averageRating = totalRatings > 0 ? (sumOfRatings / totalRatings).toFixed(2) : 0;
   await Company.findByIdAndUpdate(businessId, { averageRating });
 }
+
+
+/**
+ * Obtiene un ranking por su ID
+ * @param {Object} req - Objeto de solicitud
+ * @param {Object} res - Objeto de respuesta
+ */
+exports.getRankingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const ranking = await Ranking.findById(id);
+
+    if (!ranking) {
+      return res.status(404).json({ success: false, message: 'Ranking no encontrado' });
+    }
+
+    res.status(200).json({ success: true, data: ranking });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

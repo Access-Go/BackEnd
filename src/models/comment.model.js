@@ -33,10 +33,37 @@ const commentSchema = new mongoose.Schema({
         required: true,
         maxLength: 500
     },
+    rankingId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Ranking',
+        required: false
+    },
     createdAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    likes: { 
+        type: Number, 
+        default: 0,
+        required: false 
+    }, 
+    dislikes: { 
+        type: Number, 
+        default: 0,
+        required: false 
+    },
+    likedBy: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Users', 
+        },
+      ],
+      dislikedBy: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Users', // IDs de usuarios que dieron dislike
+        },
+      ],
 });
 
 module.exports = mongoose.model(modelName, commentSchema);

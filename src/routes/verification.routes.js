@@ -4,49 +4,35 @@ const { sendVerificationCode, verifyUserCode, updateVerifiedTrue, fyndByEmail } 
 const Users = require('../models/user.model');
 const Company = require ("../models/company.model")
 
-// Ruta para enviar el código de verificación
+
 router.post('/send-code', async (req, res) => {
     const { email } = req.body;
 
     try {
-        // Busca primero en el modelo Users
         let user = await Users.findOne({ email });
-
-        // Si no encuentra el usuario en Users, busca en Company
         if (!user) {
             user = await Company.findOne({ email });
         }
-
-        // Si el usuario no existe en Users ni en Company
         if (!user) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
+            return res.status(404).json({ success: false, message: 'Usuario no encontrado.' });
         }
-
-        // Verifica si el usuario ya está verificado
-        if (user.verified) {
-            return res.status(400).json({ message: 'La cuenta ya está verificada.' });
-        }
-
-        // Envía el código de verificación
+        
         await sendVerificationCode(user._id, email);
-
-        return res.status(200).json({ message: 'Código de verificación enviado al correo.' });
+        console.log('Código de verificación enviado exitosamente para email:', email);
+        return res.status(200).json({ success: true, message: 'Código de verificación enviado al correo.' });
     } catch (error) {
-        console.error('Error al enviar el código de verificación:', error);
-        return res.status(500).json({ message: 'Error al enviar el código de verificación.' });
+        console.error('Error al enviar el código de verificación desde back:', error);
+        return res.status(500).json({ success: false, message: 'Error al enviar el código de verificación.' });
     }
 });
 
 
-// Ruta para verificar el código
+
 router.post('/verify-code', async (req, res) => {
     const { userId, code } = req.body;
-
-    // Validación de entrada
     if (!userId || !code) {
         return res.status(400).json({ message: 'userId y código son requeridos.' });
     }
-
     try {
         const isVerified = await verifyUserCode(userId, code);
 
@@ -61,17 +47,15 @@ router.post('/verify-code', async (req, res) => {
     }
 });
 
-// Ruta para actualizar el estado de verificación a "true"
+
 router.patch('/verified-true', async (req, res) => {
     const { userId } = req.body;
 
-    // Validación de entrada
     if (!userId) {
         return res.status(400).json({ message: 'El ID de usuario es requerido.' });
     }
 
     try {
-        // Llama a la función para actualizar el estado de verificación a true
         const updatedUser = await updateVerifiedTrue(userId);
 
         if (updatedUser) {
@@ -86,21 +70,16 @@ router.patch('/verified-true', async (req, res) => {
 });
 
 router.post('/checkEmail', async (req, res) => {
-    const { email, context } = req.body; // Obtén el contexto de la solicitud
+    const { email, context } = req.body; 
 
     try {
         const result = await fyndByEmail(email);
-
-        // Si el usuario no existe
         if (!result.exists) {
             return res.status(404).json({ message: result.message });
         }
-
-        // Responde según el estado de verificación del usuario
         if (result.verified) {
             return res.status(200).json({ message: 'Correo encontrado y verificado.' });
         } else {
-            // Si el contexto es 'createAccount', puedes enviar un mensaje diferente
             if (context === 'crearAccount') {
                 return res.status(200).json({ message: 'Correo encontrado pero no verificado. Envíe el código de verificación.' });
             } else {

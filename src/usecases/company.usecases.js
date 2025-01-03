@@ -104,9 +104,42 @@ const removeCompany = async (id) => {
     return { message: 'Company successfully deleted' };
 };
 
+const getCompanyByEmail = async(email) =>{
+    const companyFound = Company.findOne({email}).select('-password');
+    if(!companyFound){
+        throw new Error('No se encontró una compañía con este correo electrónico');
+    }
+    return companyFound;
+}
+
+/**
+ * -------------------------------------------------
+ * Función para recuperar contraseña
+ * -------------------------------------------------**/
+ const resetPassword = async (newPassword) => {
+    // Buscar el usuario por su email
+    const userFound = await Company.findOne({ email });
+
+    // Verificar que el usuario exista
+    if (!userFound) {
+        throw new Error('No se encontró un usuario con este correo electrónico');
+    }
+
+    // Generar hash de la nueva contraseña
+    const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
+    // Actualizar la contraseña y limpiar los campos de recuperación
+    userFound.password = hashedPassword;
+
+    // Guardar los cambios
+    await userFound.save();
+
+    // Devolver un mensaje de éxito
+    return { message: 'Contraseña actualizada correctamente' };
+};
 /**
  * -----------------------------------------
  * Exportamos las funciones
  * -----------------------------------------
  */
-module.exports = { create, getById, getAll, update, removeCompany, updateCompanyRating };
+module.exports = { create, getById, getAll, update, removeCompany, updateCompanyRating, getCompanyByEmail, resetPassword };
