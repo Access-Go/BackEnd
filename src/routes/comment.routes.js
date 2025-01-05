@@ -138,6 +138,8 @@ router.delete('/:id', commentController.deleteComment);
 
 router.post('/like/:id', commentController.addLike);
 router.post('/dislike/:id', commentController.addDislike);
+router.post('/:id/removeLike',commentController.removeLike);
+router.post('/:id/removeDislike', commentController.removeDislike);
 
 
 /**
