@@ -24,7 +24,4 @@ Thumbs.db        # Windows
 # Archivos de configuración
 .idea/           # Archivos de configuración de JetBrains (IntelliJ, WebStorm, etc.)
 *.swp            # Archivos temporales de vim
-<<<<<<< .merge_file_ertEZ8
-=======
 
->>>>>>> .merge_file_lm6hKc
