@@ -21,7 +21,7 @@ const companySchema = new mongoose.Schema({
   profilePicture: {
     type: String,
     required: false,
-    maxLength: 100
+    maxLength: 300,
   },
   email: {
     type: String,
