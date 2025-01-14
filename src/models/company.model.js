@@ -21,7 +21,7 @@ const companySchema = new mongoose.Schema({
   profilePicture: {
     type: String,
     required: false,
-    maxLength: 300,
+    maxLength: 100
   },
   email: {
     type: String,
@@ -64,7 +64,8 @@ const companySchema = new mongoose.Schema({
   },
   horario: {
     abre: { type: String, required: false },
-    cierra: { type: String, required: false }
+    cierra: { type: String, required: false },
+    abierto24horas: { type: Boolean, default: false },
   },
   diasDeServicio: {
     type: [String],
@@ -134,6 +135,16 @@ const companySchema = new mongoose.Schema({
     twitter: { type: String, required: false },
     instagram: { type: String, required: false }
   },
+  lugares:{
+    recreativos: {
+      type: [String],
+      required: false
+    },
+    emergencia: {
+      type: [String],
+      required: false
+    }
+  },
   verified: {
     type: Boolean,
     default: false
@@ -171,3 +182,4 @@ companySchema.pre('findOneAndUpdate', function (next) {
  * -----------------------------------------------------------------
  */
 module.exports = mongoose.model(modelName, companySchema);
+
