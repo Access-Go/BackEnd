@@ -2,31 +2,71 @@ const express = require('express');
 const router = express.Router();
 const Visit = require("../models/visits.model")
 
+// Asegúrate de que la ruta al modelo sea correcta 
 router.post('/', async (req, res) => {
-    try {
-        const { page } = req.body;
-        if (!page) {
-            return res.status(400).json({ error: "Los campos 'page' es obligatorio" });
-        }
-        const visit = await Visit.findOneAndUpdate(
-            { page },
-            {
-                $inc: { visits: 1 },
-                $push: { visitDates: { date: new Date() } }
-            },
-            { upsert: true, new: true }
-        );
+     try { 
+        const { page, companyId, profile } = req.body; // Añadí profile para verificar el tipo de usuario 
+        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+       
+        if (!page || !companyId) {
+             return res.status(400).json({ error: "Los campos 'page' y 'companyId' son obligatorios" }); 
+            } 
+
+        if (profile !== 'premium') {
+     return res.status(200).json({ message: 'Solo se registran visitas de perfiles premium' }); 
+    }
+    
+    const visit = await Visit.findOne({ page, companyId }); 
+    
+    // Verificar si la IP ya visitó recientemente 
+    const recentVisit = visit?.recentVisitors.find(visitor =>
+         visitor.ip === clientIp && new Date() - new Date(visitor.lastVisit) < 10 * 60 * 1000 // 10 minutos
+     ); 
+
+    if (recentVisit) { 
+        return res.status(200).json({ 
+            success: true, 
+            message: 'Visita ya registrada recientemente.' 
+        }); 
+    } 
+
+    // Registrar la nueva visita 
+    const updatedVisit = await Visit.findOneAndUpdate(
+         { page, companyId },
+          { 
+            $inc: { visits: 1 },
+            $push: { visitDates: { date: new Date() } }, 
+            $set: { 
+                'recentVisitors.$[elem]': { 
+                    ip: clientIp, 
+                    lastVisit: new Date(), 
+                },
+            }, 
+          }, 
+         { upsert: true, 
+            new: true, 
+            arrayFilters: [{ 'elem.ip': clientIp }], 
+        } 
+    ); 
+
+         // Si la IP no existía, agrégala
+          if (!recentVisit) {
+             await Visit.updateOne( 
+                { page, companyId },
+                { $push: { recentVisitors: { ip: clientIp, lastVisit: new Date() } } } 
+            ); 
+        } 
 
         res.status(200).json({
-            success: true,
-            visit
-        });
+             success: true, 
+             visit: updatedVisit, 
+            }); 
+        }catch (error) { 
+            console.error('Error al registrar la visita:', error); 
+            res.status(500).json( { error: 'Error al registrar la visita' });
+         }
+         });
 
-    } catch (error) {
-        console.error('Error al registrar la visita:', error);
-        res.status(500).json({ error: 'Error al registrar la visita' });
-    }
-});
 
 router.get('/:id', async (req, res) => {
     try {
@@ -39,7 +79,7 @@ router.get('/:id', async (req, res) => {
         const now = new Date();
         now.setUTCHours(23, 59, 59, 999);
 
-        startDate = new Date();
+        let startDate = new Date();
         startDate.setUTCDate(startDate.getUTCDate() - 7);
         startDate.setUTCHours(0, 0, 0, 0);
 
@@ -51,6 +91,7 @@ router.get('/:id', async (req, res) => {
 
         const allVisits = await Visit.find({ page: id });
         console.log("Registros de visitas para esta página:", allVisits);
+
         switch (rango) {
             case "semana":
                 startDate = new Date(now);
@@ -78,6 +119,7 @@ router.get('/:id', async (req, res) => {
         }
 
         console.log("Fecha de inicio calculada:", startDate);
+
         const visits = await Visit.aggregate([
             {
                 $match: {
@@ -118,9 +160,8 @@ router.get('/:id', async (req, res) => {
         // Log para verificar cómo queda la estructura final de los datos
         console.log("Datos finales de visitas:", visitsData);
 
-
         res.json({
-            message: (`Estadísticas de Visitas (${rango})`),
+            message: `Estadísticas de Visitas (${rango})`,
             success: true,
             data: visitsData
         });
@@ -129,5 +170,6 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener las visitas' });
     }
 });
+
 
 module.exports = router;
