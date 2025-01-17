@@ -13,15 +13,12 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: "Los campos 'page' y 'companyId' son obligatorios" });
         }
 
-        console.log('Datos recibidos:', { page, companyId, clientIp });
 
         const visit = await Visit.findOne({ page, companyId });
 
-        console.log('Visita encontrada:', visit);
 
         if (!visit) {
             // Si no se encuentra la visita, se crea
-            console.log('No se encontró la visita, creando...');
             const newVisit = await Visit.create({
                 page,
                 companyId,
