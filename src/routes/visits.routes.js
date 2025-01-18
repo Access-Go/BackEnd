@@ -6,61 +6,45 @@ const mongoose = require('mongoose');
 // Asegúrate de que la ruta al modelo sea correcta 
 router.post('/', async (req, res) => {
     try {
-        const { page, companyId } = req.body;
-        const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+        const { page, companyId, ip } = req.body;
 
         if (!page || !companyId) {
             return res.status(400).json({ error: "Los campos 'page' y 'companyId' son obligatorios" });
         }
 
+        if (!ip) {
+            return res.status(400).json({ error: "La IP del usuario es obligatoria" });
+        }
 
         const visit = await Visit.findOne({ page, companyId });
 
-
         if (!visit) {
-            // Si no se encuentra la visita, se crea
+            // Crear nueva entrada si no existe
             const newVisit = await Visit.create({
                 page,
                 companyId,
-                visitDates: [{ date: new Date(), _id: new mongoose.Types.ObjectId() }],
-                recentVisitors: [],
                 visits: 1,
-                ipAddresses: []
+                visitDates: [{ date: new Date() }],
+                ipAddresses: [{ ip, lastVisit: new Date() }],
             });
             return res.status(201).json({ success: true, visit: newVisit });
-        } else {
-            // Si ya existe, mostrar un mensaje y no actualizar
-            console.log('Ya tiene visita registrada.');
-            return res.status(200).json({ success: true, message: 'Ya tiene visita registrada.', visit });
         }
 
-        console.log('Realizando la actualización de la visita...');
-        const updatedVisit = await Visit.findOneAndUpdate(
-            { page, companyId },
-            {
-                $inc: { visits: 1 },
-                $push: { visitDates: { date: new Date(), _id: new mongoose.Types.ObjectId() } },
-                $addToSet: {
-                    recentVisitors: {
-                        ip: clientIp,
-                        lastVisit: new Date(),
-                        _id: new mongoose.Types.ObjectId()  // Generar correctamente el ID
-                    },
-                },
-            },
-            {
-                upsert: true,
-                new: true,
-                arrayFilters: [{ 'elem.ip': clientIp }]
-            }
-        );
+        // Revisar si la IP ya está registrada
+        const ipExists = visit.ipAddresses.some(entry => entry.ip === ip);
 
-        console.log('Visita actualizada:', updatedVisit);
+        if (ipExists) {
+            console.log('Ya está registrada la visita de este IP.');
+            return res.status(200).json({ success: true, message: 'Ya está registrada la visita de este IP.' });
+        }
 
-        res.status(200).json({
-            success: true,
-            visit: updatedVisit,
-        });
+        // Actualizar visitas e IP
+        visit.visits += 1;
+        visit.ipAddresses.push({ ip, lastVisit: new Date() });
+        await visit.save();
+
+        res.status(200).json({ success: true, visit });
+
     } catch (error) {
         console.error('Error al registrar la visita:', error);
         res.status(500).json({ error: 'Error al registrar la visita' });
@@ -101,29 +85,25 @@ router.get('/:id', async (req, res) => {
         const { rango } = req.query;
 
         if (!id) {
+            console.error("Error: Falta el parámetro 'id'.");
             return res.status(400).json({ error: "El parámetro 'id' es obligatorio." });
         }
 
         if (!["día", "semana", "mes", "año"].includes(rango)) {
+            console.error("Error: Parámetro 'rango' no válido:", rango);
             return res.status(400).json({ error: "El parámetro 'rango' debe ser 'día', 'semana', 'mes' o 'año'." });
         }
 
         const now = new Date();
         const startDate = calculateStartDate(rango, now);
-
         const visits = await Visit.aggregate([
             {
                 $match: {
-                    page: id,
+                    companyId: id,
                     "visitDates.date": { $gte: startDate },
                 }
             },
             { $unwind: "$visitDates" },
-            {
-                $match: {
-                    "visitDates.date": { $gte: startDate }
-                }
-            },
             {
                 $group: {
                     _id: {
@@ -139,15 +119,17 @@ router.get('/:id', async (req, res) => {
             { $sort: { _id: 1 } }
         ]);
 
-        const visitsData = visits.map(visit => ({
+
+        const responseData = visits.map(visit => ({
             date: visit._id,
             totalVisits: visit.totalVisitas
         }));
 
+
         res.json({
             message: `Estadísticas de Visitas (${rango})`,
             success: true,
-            data: visitsData
+            data: responseData
         });
 
     } catch (error) {
@@ -155,6 +137,8 @@ router.get('/:id', async (req, res) => {
         res.status(500).json({ error: 'Error al obtener las visitas' });
     }
 });
+
+
 
 
 
