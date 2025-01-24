@@ -24,3 +24,4 @@ Thumbs.db        # Windows
 # Archivos de configuración
 .idea/           # Archivos de configuración de JetBrains (IntelliJ, WebStorm, etc.)
 *.swp            # Archivos temporales de vim
+
