@@ -15,7 +15,7 @@ async function sendEmail({ to, subject, text, html }) {
             to: [{ email: to }],
             sender: { email: 'accesgoaccesibilidad@gmail.com', name: 'AccessGo' },
             subject: subject,
-            htmlContent: html || `<p>${text}</p>`,
+            htmlContent: html || `<div>${text}</div>`,
             textContent: text
         };
 
