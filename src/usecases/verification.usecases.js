@@ -39,8 +39,29 @@ async function sendVerificationCode(userId, email) {
     await sendEmail({
         to: email,
         subject: 'Verifica tu cuenta - AccessGo',
-        text: `Tu código de verificación es: ${verificationCode}. Válido por 1 hora.`
-    });
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #E0E0E0; border-radius: 10px;">
+            <h2 style="text-align: center; color: #2E7D32;">Verifica tu cuenta en AccessGo</h2>
+            <p style="font-size: 16px; color: #455A64; line-height: 1.5;">
+              ¡Hola! Gracias por registrarte en <strong>AccessGo</strong>. Para completar tu proceso, por favor verifica tu cuenta utilizando el siguiente código:
+            </p>
+            <div style="text-align: center; margin: 20px 0;">
+              <span style="font-size: 24px; font-weight: bold; color: #2E7D32; background: #F1F8E9; padding: 10px 20px; border-radius: 8px; display: inline-block;">
+                ${verificationCode}
+              </span>
+            </div>
+            <p style="font-size: 14px; color: #78909C; text-align: center; margin-top: 20px;">
+              Este código es válido por <strong>1 hora</strong>. Si no fuiste tú quien solicitó este registro, por favor ignora este correo.
+            </p>
+            <footer style="text-align: center; margin-top: 30px; font-size: 12px; color: #9E9E9E;">
+              © 2025 AccessGo. Todos los derechos reservados.
+            </footer>
+          </div>
+        `
+      });
+      
+      
+      
 }
 
 /**
