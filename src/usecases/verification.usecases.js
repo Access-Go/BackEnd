@@ -43,7 +43,7 @@ async function sendVerificationCode(userId, email) {
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #E0E0E0; border-radius: 10px;">
             <h2 style="text-align: center; color: #2E7D32;">Verifica tu cuenta en AccessGo</h2>
             <p style="font-size: 16px; color: #455A64; line-height: 1.5;">
-              ¡Hola! Gracias por registrarte en <strong>AccessGo</strong>. Para completar tu proceso, por favor verifica tu cuenta utilizando el siguiente código:
+              ¡Hola! Gracias por elegir <strong>AccessGo</strong>. Para completar tu proceso, por favor verifica tu cuenta utilizando el siguiente código:
             </p>
             <div style="text-align: center; margin: 20px 0;">
               <span style="font-size: 24px; font-weight: bold; color: #2E7D32; background: #F1F8E9; padding: 10px 20px; border-radius: 8px; display: inline-block;">
