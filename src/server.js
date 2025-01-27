@@ -19,7 +19,7 @@ const promoRoutes = require('./routes/promo.routes');
 const rankingRoutes = require('./routes/ranking.routes');
 const volunteerRoutes = require('./routes/volunteer.routes');
 const path = require('path');
-const  accessibilityRoutes = require("./routes/accesibility.routes")
+const accessibilityRoutes = require("./routes/accesibility.routes")
 const visitasRoutes = require('./routes/visits.routes');
 
 
@@ -38,6 +38,22 @@ const corsOptions = {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
+
+setInterval(async () => {
+    const expirationTime = new Date();
+    expirationTime.setMinutes(expirationTime.getMinutes() - 10); // 10 minutos
+
+    try {
+        await Visit.updateMany(
+            {},
+            { $pull: { recentVisitors: { lastVisit: { $lt: expirationTime } } } }
+        );
+        console.log('IPs antiguas eliminadas');
+    } catch (error) {
+        console.error('Error al limpiar recentVisitors:', error);
+    }
+}, 60 * 1000); // Ejecutar cada minuto
+
 
 app.use(cors(corsOptions));
 
