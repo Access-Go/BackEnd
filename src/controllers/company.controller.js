@@ -129,7 +129,7 @@ const updateCompanyRating = async (request, response) => {
  */
 const deleteCompany = async (req, res) => {
     try {
-        const deletedCompany = await Company.findByIdAndDelete(req.params.id);
+        const deletedCompany = await companyUseCase.removeCompany(req.params.id);
         if (!deletedCompany) return res.status(404).json({ success: false, error: 'Company not found' });
 
         res.json({ success: true, message: 'Company deleted successfully' });
