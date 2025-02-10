@@ -153,7 +153,7 @@ const updateUser = async (request, response) => {
 const deleteUser = async (request, response) => {
     try {
         const { id } = request.params;
-        const deletedUser = await userUseCase.delete(id);
+        const deletedUser = await userUseCase.deleteUser(id);
 
         if (!deletedUser) {
             response.status(404).json({
