@@ -1,4 +1,6 @@
 const Comment = require('../models/comment.model');
+const mongoose = require('mongoose');
+
 
 /**
  * Crea un nuevo comentario
@@ -155,7 +157,9 @@ const addLike = async (req, res) => {
 
         await comment.save();
 
-        res.status(200).json({ success: true, message: 'Like agregado exitosamente.', comment });
+        const updatedComment = await Comment.findById(id).populate('userId', 'firstName profilePicture');
+
+        res.status(200).json({ success: true, message: 'Like agregado exitosamente.', comment: updatedComment });
     } catch (error) {
         console.error('Error al agregar like:', error);
         res.status(500).json({ success: false, message: 'Error al agregar like.', error: error.message });
@@ -205,7 +209,9 @@ const addDislike = async (req, res) => {
 
         await comment.save();
 
-        res.status(200).json({ success: true, message: 'Dislike agregado exitosamente.', comment });
+        const updatedComment = await Comment.findById(id).populate('userId', 'firstName profilePicture');
+
+        res.status(200).json({ success: true, message: 'Dislike agregado exitosamente.', comment: updatedComment });
     } catch (error) {
         console.error('Error al agregar dislike:', error);
         res.status(500).json({ success: false, message: 'Error al agregar dislike.', error: error.message });
@@ -261,35 +267,32 @@ const removeLike = async (req, res) => {
  */
 const removeDislike = async (req, res) => {
     try {
-        const { commentId } = req.params;
+        const { id } = req.params;
         const { userId } = req.body;
 
-        // Validar userId
         if (!userId) {
             return res.status(401).json({ success: false, message: 'Debes iniciar sesión para quitar dislike.' });
         }
 
-        const comment = await Comment.findById(commentId);
+        const comment = await Comment.findById(id);
 
-        // Validar si el comentario existe
         if (!comment) {
             return res.status(404).json({ success: false, message: 'Comentario no encontrado.' });
         }
 
-        // Validar si el usuario ya dio dislike
-        if (!comment.dislikedBy.includes(userId)) {
+        const dislikedByIds = comment.dislikedBy.map(user => user.toString());
+
+        if (!dislikedByIds.includes(userId)) {
             return res.status(400).json({ success: false, message: 'No has dado dislike a este comentario.' });
         }
 
-        // Quitar el dislike
         comment.dislikes -= 1;
-        comment.dislikedBy = comment.dislikedBy.filter((id) => id.toString() !== userId);
+        comment.dislikedBy = comment.dislikedBy.filter((user) => user.toString() !== userId);
 
         await comment.save();
 
         res.status(200).json({ success: true, message: 'Dislike quitado exitosamente.', comment });
     } catch (error) {
-        console.error('Error al quitar dislike:', error);
         res.status(500).json({ success: false, message: 'Error al quitar dislike.', error: error.message });
     }
 };
