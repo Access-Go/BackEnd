@@ -1,5 +1,6 @@
 const express = require('express');
 const { swaggerUi, specs } = require('./swaggerConfig');
+const Visit = require("./models/visits.model");
 
 //para aws
 const uploadRouteUPP = require('./routes/uploadUPP.routes'); // Ruta de carga
@@ -41,18 +42,15 @@ const corsOptions = {
 
 setInterval(async () => {
     const expirationTime = new Date();
-    expirationTime.setMinutes(expirationTime.getMinutes() - 10); // 10 minutos
+    expirationTime.setDate(expirationTime.getDate() - 30); 
 
     try {
-        await Visit.updateMany(
-            {},
-            { $pull: { recentVisitors: { lastVisit: { $lt: expirationTime } } } }
-        );
-        console.log('IPs antiguas eliminadas');
+        await Visit.deleteMany({ "visitDates.date": { $lt: expirationTime } });
+        console.log("Visitas antiguas eliminadas (mayores a 30 días)");
     } catch (error) {
-        console.error('Error al limpiar recentVisitors:', error);
+        console.error("Error al limpiar visitas antiguas:", error);
     }
-}, 60 * 1000); // Ejecutar cada minuto
+}, 24 * 60 * 60 * 1000);
 
 
 app.use(cors(corsOptions));
