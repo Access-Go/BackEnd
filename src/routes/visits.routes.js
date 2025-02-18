@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: "La IP del usuario es obligatoria" });
         }
 
-        const visit = await Visit.findOne({ page, companyId });
+          const visit = await Visit.findOne({ page, companyId });
 
         if (!visit) {
             // Si no existe, creamos una nueva visita
@@ -41,8 +41,7 @@ router.post('/', async (req, res) => {
         // Si es una nueva IP, actualizamos la fecha de visita
         visit.visits += 1;
         visit.ipAddresses.push({ ip, lastVisit: new Date() });
-        visit.visitDates.push({ date: new Date() }); // 👈 Agregamos la fecha de visita
-
+        visit.visitDates.push({ date: new Date() }); 
         await visit.save();
 
         res.status(200).json({ success: true, visit });
@@ -99,7 +98,7 @@ router.get('/:id', async (req, res) => {
 
         const now = new Date();
         const startDate = calculateStartDate(rango, now);
-        const visits = await Visit.aggregate([
+       const visits = await Visit.aggregate([
             {
                 $match: {
                     companyId: id,
@@ -124,8 +123,6 @@ router.get('/:id', async (req, res) => {
             },
             { $sort: { _id: 1 } }
         ]);
-        
-
 
         const responseData = visits.map(visit => ({
             date: visit._id,
