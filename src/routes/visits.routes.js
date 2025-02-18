@@ -16,15 +16,15 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ error: "La IP del usuario es obligatoria" });
         }
 
-        const visit = await Visit.findOne({ page, companyId });
+          const visit = await Visit.findOne({ page, companyId });
 
         if (!visit) {
-            // Crear nueva entrada si no existe
+            // Si no existe, creamos una nueva visita
             const newVisit = await Visit.create({
                 page,
                 companyId,
                 visits: 1,
-                visitDates: [{ date: new Date() }],
+                visitDates: [{ date: new Date() }], // Agregar la fecha
                 ipAddresses: [{ ip, lastVisit: new Date() }],
             });
             return res.status(201).json({ success: true, visit: newVisit });
@@ -38,9 +38,10 @@ router.post('/', async (req, res) => {
             return res.status(200).json({ success: true, message: 'Ya está registrada la visita de este IP.' });
         }
 
-        // Actualizar visitas e IP
+        // Si es una nueva IP, actualizamos la fecha de visita
         visit.visits += 1;
         visit.ipAddresses.push({ ip, lastVisit: new Date() });
+        visit.visitDates.push({ date: new Date() }); 
         await visit.save();
 
         res.status(200).json({ success: true, visit });
@@ -96,29 +97,31 @@ router.get('/:id', async (req, res) => {
 
         const now = new Date();
         const startDate = calculateStartDate(rango, now);
-        const visits = await Visit.aggregate([
+       const visits = await Visit.aggregate([
             {
                 $match: {
                     companyId: id,
-                    "visitDates.date": { $gte: startDate },
+                    $or: [
+                        { "visitDates.date": { $gte: startDate } },
+                        { "ipAddresses.lastVisit": { $gte: startDate } }
+                    ]
                 }
             },
-            { $unwind: "$visitDates" },
+            { $unwind: "$visitDates" },  
             {
                 $group: {
                     _id: {
                         $dateToString: {
                             format: rango === "año" ? "%Y" :
-                                rango === "mes" ? "%Y-%m" : "%Y-%m-%d",
+                                    rango === "mes" ? "%Y-%m" : "%Y-%m-%d",
                             date: "$visitDates.date"
                         }
                     },
-                    totalVisitas: { $sum: 1 }
+                    totalVisitas: { $sum: "$visits" } 
                 }
             },
             { $sort: { _id: 1 } }
         ]);
-
 
         const responseData = visits.map(visit => ({
             date: visit._id,
