@@ -98,32 +98,32 @@ router.get('/:id', async (req, res) => {
 
         const now = new Date();
         const startDate = calculateStartDate(rango, now);
-       const visits = await Visit.aggregate([
+        const visits = await Visit.aggregate([
             {
                 $match: {
                     companyId: id,
                     $or: [
-                        { "visitDates.date": { $gte: startDate } },
-                        { "ipAddresses.lastVisit": { $gte: startDate } }
+                        { "visitDates.date": { $gte: startDate } }, // Antes solo contabas esto
+                        { "ipAddresses.lastVisit": { $gte: startDate } } // Ahora también cuentas la última visita por IP
                     ]
                 }
             },
-            { $unwind: "$visitDates" },  
+            { $unwind: "$ipAddresses" }, // Agregamos esto para contar cada IP
             {
                 $group: {
                     _id: {
                         $dateToString: {
                             format: rango === "año" ? "%Y" :
                                     rango === "mes" ? "%Y-%m" : "%Y-%m-%d",
-                            date: "$visitDates.date"
+                            date: "$ipAddresses.lastVisit" // Contamos la última visita
                         }
                     },
-                    totalVisitas: { $sum: "$visits" } 
+                    totalVisitas: { $sum: 1 } // Sumamos correctamente todas las visitas
                 }
             },
             { $sort: { _id: 1 } }
         ]);
-
+        
         const responseData = visits.map(visit => ({
             date: visit._id,
             totalVisits: visit.totalVisitas
