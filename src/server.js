@@ -23,6 +23,8 @@ const path = require('path');
 const accessibilityRoutes = require("./routes/accesibility.routes")
 const visitasRoutes = require('./routes/visits.routes');
 
+const cron = require('node-cron');
+const Promo = require('./models/promo.model'); // Asegúrate de usar la ruta correcta a tu modelo
 
 
 require('dotenv').config();
@@ -51,6 +53,22 @@ setInterval(async () => {
         console.error("Error al limpiar visitas antiguas:", error);
     }
 }, 24 * 60 * 60 * 1000);
+
+
+
+// Ejecutar cada día a la medianoche (hora del servidor)
+cron.schedule('0 0 * * *', async () => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Eliminar hora para comparar solo la fecha
+
+    const result = await Promo.deleteMany({ endDate: { $lt: today } });
+
+    console.log(`Promociones eliminadas: ${result.deletedCount}`);
+  } catch (error) {
+    console.error('Error eliminando promociones expiradas:', error);
+  }
+});
 
 
 app.use(cors(corsOptions));
