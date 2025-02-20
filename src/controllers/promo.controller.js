@@ -2,8 +2,8 @@ const promoUsecase = require('../usecases/promo.usecases');
 const Company = require('../models/company.model');
 const Promo = require('../models/promo.model')
 const { uploadImage } = require('../utils/upload');
-// Importar el modelo Promo
-// Ajusta la ruta según tu estructura de proyecto
+
+
 async function createPromo(req, res) {
     try {
         console.log("Request body:", req.body); // Verificar qué datos llegan
