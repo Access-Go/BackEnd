@@ -40,6 +40,10 @@ const promoSchema = new mongoose.Schema({
         type: Date,
         required: false
     },
+    images: { 
+        type: [String],
+        default: []
+    },
     openingTime: {
         type: Number,
         required: false
