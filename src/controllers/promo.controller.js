@@ -1,9 +1,10 @@
 const promoUsecase = require('../usecases/promo.usecases');
 const Company = require('../models/company.model');
 const Promo = require('../models/promo.model')
+const { uploadImage } = require('../utils/upload');
 // Importar el modelo Promo
- // Ajusta la ruta según tu estructura de proyecto
- async function createPromo(req, res) {
+// Ajusta la ruta según tu estructura de proyecto
+async function createPromo(req, res) {
     try {
         console.log("Request body:", req.body); // Verificar qué datos llegan
         const { businessId, name, description, startDate, endDate } = req.body;
@@ -12,8 +13,24 @@ const Promo = require('../models/promo.model')
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
 
-        // Crear la nueva promoción
-        const newPromo = new Promo({ businessId, name, description, startDate, endDate });
+        // Subir imágenes a Google Cloud Storage
+        let imageUrls = [];
+        if (req.files) {
+            const uploadPromises = req.files.map((file) => uploadImage(file));
+            imageUrls = await Promise.all(uploadPromises);
+        }
+
+        // Guardar en MongoDB
+        const newPromo = new Promo({
+            businessId,
+            name,
+            description,
+            startDate,
+            endDate,
+            images: imageUrls, // Guardar las URLs de las imágenes
+        });
+
+       
         await newPromo.save();
 
         // Respuesta con success: true
@@ -35,7 +52,7 @@ const getPromosByBusiness = async (req, res) => {
     try {
 
         const promos = await promoUsecase.getByBusiness(req.params.businessId);
-        
+
         res.status(200).json({ success: true, data: promos });
     } catch (error) {
         console.error("Error al obtener promociones:", error);
