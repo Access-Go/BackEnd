@@ -3,9 +3,8 @@ const promoController = require('../controllers/promo.controller');
 const router = express.Router();
 const multer = require('multer');
 
-// Configuración de multer para almacenar archivos en memoria temporalmente
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage }).array('images', 2); // Solo permite 2 imágenes
+const storage = multer.memoryStorage(); // Guardar archivos en memoria temporal
+const upload = multer({ storage }).array("images", 2);  // Asegurar que 'images' coincida con el frontend
 
 
 router.post('/', upload, promoController.createPromo);
