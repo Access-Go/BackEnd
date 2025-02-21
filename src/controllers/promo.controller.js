@@ -6,9 +6,17 @@ const { uploadImage } = require('../utils/upload');
 
 async function createPromo(req, res) {
     try {
-        console.log("Request body:", req.body); // Verificar qué datos llegan
+        // Verificar qué datos llegan en el cuerpo de la solicitud
+        console.log("Request body:", req.body); // Aquí deberías ver los campos del formulario (businessId, name, etc.)
+        console.log("Archivos recibidos:", req.files); // Verificar si las imágenes están en req.files
+
+        if (!req.files || req.files.length === 0) {
+            return res.status(400).json({ message: 'No se recibieron imágenes.' });
+        }
+
         const { businessId, name, description, startDate, endDate } = req.body;
 
+        // Validación de campos obligatorios
         if (!businessId || !name || !description || !startDate || !endDate) {
             return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
         }
@@ -16,24 +24,28 @@ async function createPromo(req, res) {
         // Subir imágenes a Google Cloud Storage
         let imageUrls = [];
         if (req.files) {
-            const uploadPromises = req.files.map((file) => uploadImage(file));
-            imageUrls = await Promise.all(uploadPromises);
+            console.log("Iniciando subida de imágenes...");
+            const uploadPromises = req.files.map((file) => uploadImage(file)); // Subir cada imagen
+            imageUrls = await Promise.all(uploadPromises); // Esperar que todas las imágenes se suban
+            console.log("URLs de las imágenes:", imageUrls); // Verificar las URLs de las imágenes subidas
         }
 
-        // Guardar en MongoDB
+        // Crear el objeto de promoción
         const newPromo = new Promo({
             businessId,
             name,
             description,
             startDate,
             endDate,
-            images: imageUrls, // Guardar las URLs de las imágenes
+            images: imageUrls, // Guardar las URLs de las imágenes subidas
         });
 
-       
+        // Guardar la nueva promoción en la base de datos
+        console.log("Guardando promoción en la base de datos...");
         await newPromo.save();
 
-        // Respuesta con success: true
+        // Responder con éxito
+        console.log("Promoción creada exitosamente:", newPromo); // Log del objeto promocional creado
         res.status(200).json({
             success: true,
             message: 'Promoción creada exitosamente.',
@@ -44,7 +56,6 @@ async function createPromo(req, res) {
         res.status(500).json({ success: false, message: 'Error interno del servidor.' });
     }
 }
-
 
 
 
