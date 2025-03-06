@@ -3,53 +3,58 @@ const router = express.Router();
 const Visit = require("../models/visits.model")
 const mongoose = require('mongoose');
 
-// Asegúrate de que la ruta al modelo sea correcta 
+// Registrar una visita
 router.post('/', async (req, res) => {
     try {
         const { page, companyId, ip } = req.body;
 
-        if (!page || !companyId) {
-            return res.status(400).json({ error: "Los campos 'page' y 'companyId' son obligatorios" });
+        if (!page || !companyId || !ip) {
+            return res.status(400).json({ error: "Los campos 'page', 'companyId' e 'ip' son obligatorios" });
         }
 
-        if (!ip) {
-            return res.status(400).json({ error: "La IP del usuario es obligatoria" });
-        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Para comparar solo la fecha
 
-          const visit = await Visit.findOne({ page, companyId });
+        let visit = await Visit.findOne({ page, companyId });
 
         if (!visit) {
-            // Si no existe, creamos una nueva visita
-            const newVisit = await Visit.create({
+            // Si no existe, creamos un nuevo registro
+            visit = await Visit.create({
                 page,
                 companyId,
                 visits: 1,
-                visitDates: [{ date: new Date() }], // Agregar la fecha
-                ipAddresses: [{ ip, lastVisit: new Date() }],
+                visitDates: [{ date: today }],
+                ipAddresses: [{ ip, lastVisit: today }],
             });
-            return res.status(201).json({ success: true, visit: newVisit });
+            return res.status(201).json({ success: true, visit });
         }
 
-        // Revisar si la IP ya está registrada
-        const ipExists = visit.ipAddresses.some(entry => entry.ip === ip);
+        // Verificar si la IP ya tiene una visita registrada HOY
+        const ipEntry = visit.ipAddresses.find(entry => entry.ip === ip);
 
-        if (ipExists) {
-            console.log('Ya está registrada la visita de este IP.');
-            return res.status(200).json({ success: true, message: 'Ya está registrada la visita de este IP.' });
+        if (ipEntry && new Date(ipEntry.lastVisit).getTime() === today.getTime()) {
+            return res.status(200).json({ success: true, message: "Ya se registró una visita de esta IP hoy." });
         }
 
-        // Si es una nueva IP, actualizamos la fecha de visita
+        // Si es una nueva visita del día, actualizar el registro
         visit.visits += 1;
-        visit.ipAddresses.push({ ip, lastVisit: new Date() });
-        visit.visitDates.push({ date: new Date() }); 
+
+        if (ipEntry) {
+            ipEntry.lastVisit = today; // Actualiza la fecha de la IP existente
+        } else {
+            visit.ipAddresses.push({ ip, lastVisit: today }); // Agrega la nueva IP
+        }
+
+        // Registrar la visita en el array de fechas
+        visit.visitDates.push({ date: today });
+
         await visit.save();
 
         res.status(200).json({ success: true, visit });
 
-
     } catch (error) {
-        console.error('Error al registrar la visita:', error);
-        res.status(500).json({ error: 'Error al registrar la visita' });
+        console.error("Error al registrar la visita:", error);
+        res.status(500).json({ error: "Error al registrar la visita" });
     }
 });
 

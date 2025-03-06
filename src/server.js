@@ -42,18 +42,6 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-setInterval(async () => {
-    const expirationTime = new Date();
-    expirationTime.setDate(expirationTime.getDate() - 30); 
-
-    try {
-        await Visit.deleteMany({ "visitDates.date": { $lt: expirationTime } });
-        console.log("Visitas antiguas eliminadas (mayores a 30 días)");
-    } catch (error) {
-        console.error("Error al limpiar visitas antiguas:", error);
-    }
-}, 24 * 60 * 60 * 1000);
-
 
 
 // Ejecutar cada día a la medianoche (hora del servidor)
