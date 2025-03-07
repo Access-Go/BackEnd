@@ -26,7 +26,8 @@ const companySchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
-    match: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+,
     minLength: 4,
     maxLength: 30
   },
