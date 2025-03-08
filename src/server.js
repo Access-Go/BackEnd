@@ -36,7 +36,7 @@ const cors = require('cors');
 const app = express();
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://accessgo--two.vercel.app', 'https://access-go-dev.vercel.app'],
+    origin: ['http://localhost:3000', 'https://accessgo--two.vercel.app', 'https://access-go-dev.vercel.app', 'https://www.accessgo.org'],
     optionsSuccessStatus: 200,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
